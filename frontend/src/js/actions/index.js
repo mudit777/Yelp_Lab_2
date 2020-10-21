@@ -1,0 +1,914 @@
+import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO } from '../constants/action-types'
+import axios from 'axios';
+import { BACKEND } from '../../Config';
+import {Input, Button, notification} from 'antd';
+import { responsiveMap } from 'antd/lib/_util/responsiveObserve';
+import cookie from 'react-cookies';
+
+export function customerLogin(payload){
+    let data = {};
+    return(dispatch)=>{
+        axios.defaults.withCredentials = true;
+        axios.post(`${BACKEND}/signIn`, payload).then(response => {
+            if(response.status === 200)
+            {
+                notification["success"]({
+                    message: 'User SignedIn',
+                    description:
+                      'User successfully signed in',
+                  });
+                  window.sessionStorage.setItem("isLoggedIn", true)
+                  window.sessionStorage.setItem("UserId",response.data.user_id);
+                  data ={
+                    message : "Successfully logged in",
+                    user_id : response.data.user_id,
+                    user : response.data,
+                    authFlag : true
+                  }
+            }
+            else if(response.status === 209)
+            {
+                notification["error"]({
+                    message: 'Invalid credentials',
+                    description:
+                        'Please enter valid Password',
+                        user_id : -1
+                    });
+                data ={
+                    message : "Please check your credentials",
+                    user_id : -1,
+                    authFlag : false
+                  }
+                
+            }
+            else if(response.status === 207)
+            {
+                notification["error"]({
+                    message: 'Invalid credentials',
+                    description:
+                        'User doesnt exist',
+                        user_id : -1
+                    });
+                data ={
+                    message : "Please check your credentials",
+                    user_id : -1, 
+                    authFlag : false
+                  }
+                
+            }
+        
+            dispatch({ type: CUSTOMER_LOGIN, data })
+        })
+        .catch(err => {
+            notification["error"]({
+                message: 'Invalid credentials ',
+                description:
+                  'Please enter valid Email and Password in server',
+                  user_id : -1
+              });
+              data ={
+                msg : "Please check your credentials",
+              }
+            // dispatch({ type: CUSTOMER_LOGIN, data })
+        });
+    }
+} 
+
+export function getCustomerProfile (payload) {
+    let data = {};
+    return(dispatch)=>{
+        axios.defaults.withCredentials = true;
+        axios.post(`${BACKEND}/getUserDetails`, payload).then(response => {
+            if(response.status === 200)
+            {
+                // this.setState({
+                //     name : response.data.first_name + " " + response.data.last_name.charAt(0) + ".",
+                //     first_name : response.data.first_name
+                // })
+                window.sessionStorage.setItem('Name', response.data.first_name + " " + response.data.last_name.charAt(0) + ".")
+                if(response.data.profile_photo === null)
+                {
+                }
+                // else{
+                //     // this.setState({
+                //     //     imageUrl : "http://localhost:8080/" + response.data.profile_photo,
+                //     // })
+                // }
+                Object.keys(response.data).forEach(function(key) {
+                    if(response.data[key] === null || response.data[key] === "null") {
+                        response.data[key] = '';
+                    }
+                })
+                if(response.data.city === "null")
+                {
+                    response.data.city = "Please let us know where ar you?"
+                    
+                }
+                if(response.data.state === "null")
+                {
+                    response.data.state = " "
+                }
+                data = {
+                    user : response.data,
+                    // name : response.data.first_name + " " + response.data.last_name.charAt(0) + ".",
+                    // first_name : response.data.first_name,
+                    // last_name : response.data.last_name,
+                    // nick_name : response.data.nick_name,
+                    // birthday : response.data.birth_day,
+                    // headline : response.data.headline,
+                    // adress: response.data.address,
+                    // city : response.data.city,
+                    // yelping_since : response.data.yelping_since,
+                    // things_i_love : response.data.things_i_love,
+                    // location : response.data.city + ", " + response.data.state,
+                    // state : response.data.state,
+                    // country : response.data.country,
+                    // zip_code : response.data.zip_code,
+                    // favourites : response.data.favourites,
+                    // blog : response.data.blog,
+                    // profile_photo : `${BACKEND}/getProfileImage/` +  window.sessionStorage.getItem("UserId"),
+                    // email : response.data.email,
+                    // phoneNumber : response.data.phone_number,
+                    // msg : "Fetched User Info",
+                    // address : response.data.address,
+                    authFlag : true,
+                    userUpdatedFlag : false,
+                    message : "Customer Info fetched"
+                }
+                dispatch({ type: CUSTOMER_PROFILE, data })
+            }
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+
+export function resgisterUser(payload){
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.withCredentials = true
+            axios.post(`${BACKEND}/registerUser`, payload).then(response => {
+                if(response.status === 299)
+                {
+                    data = {
+                        message : "User with same email exists"
+                    }
+                    notification["error"]({
+                        message: 'EmailId exists',
+                        description:
+                          'User with same EmailId is registered',
+                      });
+                }
+                else if(response.status === 200)
+                {
+                    data = {
+                        message : "User Registered"
+                    }
+                    notification["success"]({
+                        message: 'User Registered',
+                        description:
+                          'User successfully registered',
+                      });
+                }
+                dispatch({type : CUSTOMER_SIGNUP, data})
+            }).catch(err => {
+            });
+    }
+}
+
+export function updateCustomerProfile(payload){
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.withCredentials = true;
+        axios.post(`${BACKEND}/updateUserInfo`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "User Info Updated",
+                    // full_name : payload.full_name,
+                    // first_name : payload.first_name,
+                    // last_name : payload.last_name,
+                    // email : payload.email,
+                    // phoneNumber : payload.phone_number,
+                    // nick_name : payload.nick_name,
+                    // birthday : payload.birth_day,
+                    // headline : payload.headline,
+                    // address : payload.address,
+                    // city : payload.city,
+                    // state : payload.state,
+                    // country : payload.country,
+                    // zip_code : payload.zip_code,
+                    // things_i_love : payload.things_i_love,
+                    // blog : payload.blog,
+                    // // yelping_since : payload.yelping_since,
+                    // favourites : payload.favourites,
+                    userUpdatedFlag : true
+                }
+                dispatch({type : UPDATE_CUSTOMER, data});
+                // window.location.href = '/customerProfile'
+            }
+        }).catch()
+    }
+}
+
+export function customerLogOut(){
+    let data = {}
+    return(dispatch) => {
+        cookie.remove('cookie', { path: '/' })
+        sessionStorage.clear();
+        data = {
+            message : "User Logged out",
+            authFlag : false,
+            fullname : "",
+            first_name : "",
+            last_name : "",
+            nick_name : "",
+            birthday : "",
+            headline : "",
+            city : "",
+            // yelping_since : "",
+            things_i_love : "",
+            location : "",
+            state: "",
+            country : "",
+            zip_code : "",
+            favourites : "",
+            blog : "",
+            profile_photo : "",
+            email : "",
+            phoneNumber : "",
+
+        }
+        dispatch({type: LOGOUT_CUSTOMER, data})
+    }
+}
+
+export function getRestraurant(){
+    let data = {}
+    return(dispatch) => {
+        axios.get(`${BACKEND}/getAllRestraurants`).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    restraurants : response.data,
+                    message : "Fetched all the restraurants"
+                }
+                dispatch({type : GET_RESTRAURANT, data})
+            }
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+
+export function searchRestraurants(payload){
+    let data = {}
+    return (dispatch) => {
+        axios.post(`${BACKEND}/search`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    restraurants : response.data,
+                    message : "Restraurants searched"
+                }
+            }
+            dispatch({type : SEARCH_RESTRAURANT, data})
+        }).catch();
+    }
+}
+
+export function getDeliveryFilterRestraurants(payload){
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getDeliveryFilterRestraurants`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    restraurants : response.data
+                }
+            }
+            dispatch({type : FILTER_DELIVERY_RESTRAURANT, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        }); 
+    }
+} 
+
+export function getNeighorhoodFilterRestraurants(payload){
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getNeighorhoodRestraurants`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    restraurants : response.data
+                }
+            }
+            dispatch({type : FILTER_NEIGHORHOOD_RESTRAURANT, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        }); 
+    }
+} 
+
+export function finalFilter(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/finalFilter`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    restraurants : response.data,
+                    message : "Filter has been applied"
+                }
+            }
+        dispatch({type : FINAL_FILTER, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function getCustomerOrders(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getUserOrders`, payload).then(response => {
+            if(response.status === 200)
+            {
+                var result = []
+                var count = 0
+                for(let i in response.data)
+                {
+                    let order = response.data[i];
+                    var restraurant = {
+                        RestrauId : order.restraurant_id
+                    }
+
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;                   
+                    }
+                    temp().then(restraurantResponse=>{
+                        if(restraurantResponse.status === 200)
+                        {
+                            order = {...order, restraurant : restraurantResponse.data}
+                            result.push(order)
+                            count++;
+                            if(count === response.data.length)
+                            {
+                                data = { 
+                                    customer_orders : result,
+                                    message : "Customer Orders updated"
+                                }
+                                dispatch({type : CUSTOMRE_ORDERS, data})
+                            }
+                        }        
+                    })
+                }     
+                
+            }
+           
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function filter_customer_orders(payload)
+{
+    let data = {}
+    return(dispatch) =>{
+        axios.post(`${BACKEND}/filterCustomerOrders`, payload).then(response => {
+            if(response.status === 200)
+            {
+                var result = []
+                var count = 0
+                for(let i in response.data)
+                {
+                    let order = response.data[i];
+                    var restraurant = {
+                        RestrauId : order.restraurant_id
+                    }
+
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;                   
+                    }
+                    temp().then(restraurantResponse=>{
+                        if(restraurantResponse.status === 200)
+                        {
+                            order = {...order, restraurant : restraurantResponse.data}
+                            result.push(order)
+                            count++;
+                            console.log("Count is ", count)
+                            if(count === response.data.length)
+                            {
+                                data = { 
+                                    customer_orders : result,
+                                    message : "Customer Orders updated"
+                                }
+                                dispatch({type : FILTER_CUSTOMER_ORDERS, data})
+                            }
+                        }        
+                    })
+                }
+            }
+        }).catch()
+    }   
+}
+export function get_customer_events()
+{
+    let data = {}
+    return(dispatch) =>{
+        axios.post(`${BACKEND}/getEvents`).then(response => {
+            if(response.status === 200)
+            {   
+                response.data.sort((a, b) => (a.event_date > b.event_date) ? 1 : (a.event_date === b.event_date) ? ((a.event_time > b.event_time) ? 1 : -1) : -1 )
+                data = {
+                    customer_events : response.data,
+                    message : "Customer Events Fetched"
+                }
+            }
+            dispatch({type : CUSTOMER_EVENTS, data})
+        }).catch()
+    }   
+}
+export function search_customer_events(payload)
+{
+    let data = {}
+    return(dispatch) =>{
+        axios.post(`${BACKEND}/searchEvents`, payload).then(response => {
+            if(response.status === 200)
+            {   
+                response.data.sort((a, b) => (a.event_date > b.event_date) ? 1 : (a.event_date === b.event_date) ? ((a.event_time > b.event_time) ? 1 : -1) : -1 )
+                data = {
+                    customer_events : response.data,
+                    message : "Customer events searched"
+                }
+               
+            }
+            dispatch({type : SEARCH_CUSTOMER_EVENTS, data})
+        }).catch()
+    }   
+}
+export function get_customer_registered_events(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getUserEvents`, payload).then(response => {
+            if(response.status === 200)
+            {
+                var result = []
+                for(let i in response.data)
+                {
+                    let event = response.data[i]
+                    var restraurant = {
+                        RestrauId : event.restraurant_id
+                    }
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;                   
+                    }
+                    temp().then(restraurantResponse=>{
+                        if(restraurantResponse.status === 200)
+                        {
+                            event = {...event, restraurant : restraurantResponse.data}
+                            result.push(event)
+                            if(result.length === response.data.length)
+                            {
+                                data = {
+                                    customer_registered_events : result,
+                                    message : "Customer registered events fetched"
+                                }
+                                dispatch({type : CUSTOMER_REGISTERED_EVENTS, data})
+                            }
+                        }        
+                    })
+                }
+               
+            }
+            
+        })
+    }
+}
+export function get_customer_reviews(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getUserReviews`, payload).then(response => {
+            if(response.status === 200)
+            {
+                var result = []
+                for(let i in response.data)
+                {
+                    let review = response.data[i];
+                    var restraurant = {
+                        RestrauId : review.restraurant_id
+                    }
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;
+                    }
+                    temp().then(restrauResponse => {
+                        if(restrauResponse.status === 200)
+                        {
+                            review = {...review, restraurant : restrauResponse.data}
+                            result.push(review)
+                            if(result.length === response.data.length)
+                            {
+                                data = {
+                                    customer_reviews : result,
+                                    message : "Customer Reviews Fetched"
+                                }
+                                dispatch({type: CUSTOMER_REVIEWS, data})
+                            }
+                        }
+                    })
+                }
+                
+            }
+            
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function get_user_cart_details()
+{
+    let data = {}
+    return(dispatch) => {
+        var user = {
+            user_id : window.sessionStorage.getItem("UserId")
+        }
+        axios.post(`${BACKEND}/getUserCartDetails`, user).then(response => {
+            if(response.status === 200)
+            {
+                if(response.data.length > 0)
+                {
+                    window.sessionStorage.setItem("OrderRestrauId", response.data[0].restraurant_id)
+                }
+                else{
+                    window.sessionStorage.removeItem("OrderRestrauId")
+                }
+                var count = 0;
+                var result =[];
+                for(let i in response.data)
+                {
+                    let item = response.data[i];
+                    var dish = {
+                        dish_id : item.dish_id
+                    }
+                    let temp = async() => {
+                        const dishResponse = await axios.post(`${BACKEND}/getDishDetails`, dish)
+                        return dishResponse
+                    }
+                    temp().then(dishResponse => {
+                        if(dishResponse.status === 200)
+                        {
+                            item = {...item, dish : dishResponse.data}
+                            result.push(item)
+                            if(result.length === response.data.length)
+                            {
+                                data = {
+                                    cartItems : result,
+                                    message : "User cart details fetched"
+                                }
+                                dispatch({type : USER_CART_DETAILS, data})
+                            }
+                        }
+                    })
+                }
+                
+                
+                
+            }
+            
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function get_customer_restraurant_details(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getRestrauDetails`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    customer_restraurant : response.data,
+                    message : "Customer side Restraurant Details fetched"
+                }
+            }
+            dispatch({type : GET_CUSTOMER_RESTRAURANT_DETAILS, data})
+        })
+    }
+}
+export function get_customer_restraurant_dishes(payload)
+{
+    let data = {}
+    return(dispatch) =>{
+        axios.post(`${BACKEND}/getDishes`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    customer_restraurant_dishes : response.data,
+                    message : "Customer side dishes fetched"
+                }
+            }
+            dispatch({type : GET_CUSTOMER_RESTRAURANT_DISHES, data})
+        })
+    }
+   
+}
+export function delete_cart_item(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/deleteCartItem`, payload).then(response => {
+            if(response.status === 200)
+            {
+                
+                data = {
+                    message : "Cart Item Deleted"
+                }
+            }
+            dispatch({type : DELETE_CART_ITEM, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function place_order(payload)
+{
+    console.log("Order is", payload)
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/placeOrder`, payload).then(response => {
+            if(response.status === 200)
+            {
+                notification["success"]({
+                    message: 'Order Placed',
+                    description: 'Order placed successfully',
+                });
+                window.sessionStorage.removeItem("OrderRestrauId")
+                data = {
+                    message : "Order Placed"
+                }
+            }
+            dispatch({type : PLACE_ORDER, data})
+        })
+    }
+}
+export function get_customer_current_dish_details(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getDishDetails`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    customer_current_dish_details : response.data,
+                    message : "Customer Current dish details fetched"
+                }
+            }
+            dispatch({type : GET_CUSTOMER_CURRENT_DISH_DETAILS, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function set_cart_item_quantity(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/setCartItemQuantity`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Cart item quantity updated"
+                }
+            }
+            dispatch({type : SET_CART_ITEM_QUANTITY, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function get_cart_item_details(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getCartItemDetails`, payload).then(reponse => {
+            if(reponse.status === 200)
+            {
+                data = {
+                    current_cart_item_details : reponse.data,
+                    message : "Current cart item details fetched"
+                }
+            }
+            dispatch({type : GET_CURRENT_CART_ITEM_DETAILS, data})
+        })
+    }
+}
+export function register_for_an_event(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/registerUserForEvent`, payload).then(response => {
+            if(response.status === 299)
+            {
+                notification["error"]({
+                    message: 'Already Registered',
+                    description:
+                      'Customer has already registered for the event',
+                  });
+                  data = {
+                      message : "Customer has already registered for this event"
+                  }
+            }
+            if(response.status === 200)
+            {
+                setTimeout(() =>{
+                    notification["success"]({
+                        message: 'Event added',
+                        description:
+                          'Registered to event successfully',
+                      });
+                }, 1500)
+                data = {
+                    message : "Register to event successfully"
+                }
+            }
+            dispatch({type : REGISTER_FOR_AN_EVENT, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function add_item_to_cart(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/addItemToCart`, payload).then(response => {
+            if(response.status === 200)
+            {
+                    notification["success"]({
+                        message: 'Item Added',
+                        description:
+                        'Item successfully added to the cart',
+                    });
+                // window.sessionStorage.setItem("OrderRestrauId", this.state.restraurant_id)
+                data = {
+                    message : "Item Added to the cart"
+                }
+            }
+            dispatch({type : ADD_ITEM_TO_CART, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider errorrrrr',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function get_customer_restraurant_images(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/getRestraurantImages`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Restraurant Images fetched",
+                    customer_restraurant_images : response.data
+                }
+            }
+            dispatch({type : GET_CUSTOMER_RESTRAURANT_IMAGES, data})
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider errorrrrr',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
+    }
+}
+export function upload_user_photo(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.post(`${BACKEND}/uploadPhoto`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Photo Uploaded"
+                }
+            }
+            dispatch({
+                type : UPDATE_USER_PHOTO,
+                data
+            })
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                    'Please try again in few minutes',
+                });
+            }
+        });
+    }
+}
