@@ -119,7 +119,16 @@ class UpperCustomerProfile extends Component {
         }
         if(window.sessionStorage.getItem("isLoggedIn") === 'true')
         {
-            temp = <Avatar src = {`${BACKEND}/getProfileImage/` +  window.sessionStorage.getItem("UserId")} />
+            var filename = "/profile_images/user.png"
+            // console.log(this.props.user)
+            if(this.props.user)
+            {
+                if(this.props.user.profile_photo)
+                {
+                    filename = this.props.user.profile_photo.split('public').pop()
+                }
+            }
+            temp = <Avatar src = {`${BACKEND}` + filename}/>
         }
         else
         {
@@ -191,6 +200,7 @@ function mapDispatchToProps(dispatch) {
     return {
       msg: store.message,
       user_id : "",
+      user : store.user,
       authFlag : store.authFlag,
       first_name : store.first_name,
     last_name : store.last_name,

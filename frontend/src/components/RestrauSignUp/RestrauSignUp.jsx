@@ -150,152 +150,39 @@ class RestrauSignUp extends Component {
                         </div>
                     </div>
                         <div className="signUpForm">
-                            {/* <Form onFinish={this.handleSubmit}> */}
                                 <Row>
                                     <Col md ={6}>
-                                        {/* <Form.Item id = 'firstName'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter the First Name"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width : "57%"
-                                        }}
-                                        > */}
-                                            <Input id ='firstName' placeholder="First Name"  style = {{width : "57%"}} required></Input>
-                                        {/* </Form.Item> */}
+                                        <Input id ='firstName' placeholder="First Name"  style = {{width : "57%"}} required></Input>
                                     </Col>
                                     <Col md ={6}>
-                                    {/* <Form.Item id = 'lastName'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter the Last Name"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width : "57%",
-                                            marginLeft:"-41%"
-                                        }}
-                                        > */}
-                                            <Input id = 'lastName' placeholder="Last Name"  style = {{ width : "57%",marginLeft:"-41%"}}></Input>
-                                    {/* </Form.Item> */}
+                                        <Input id = 'lastName' placeholder="Last Name"  style = {{ width : "57%",marginLeft:"-41%"}}></Input>
                                     </Col>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
-                                    {/* <Form.Item id = 'email'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter your Email"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width:"29%"
-                                        }}
-                                        > */}
-                                            <Input placeholder="Email" id = 'email' style = {{width:"29%"}}></Input>
-                                            
-                                    {/* </Form.Item> */}
+                                    <Input placeholder="Email" id = 'email' style = {{width:"29%"}}></Input>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
-                                    {/* <Form.Item id = 'email'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter your Email"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width:"29%"
-                                        }}
-                                        > */}
-                                            <Input placeholder="Restraurant Name" id = "rName"  style = {{width:"29%"}}></Input>
-                                            
-                                    {/* </Form.Item> */}
+                                    <Input placeholder="Restraurant Name" id = "rName"  style = {{width:"29%"}}></Input>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
                                     <Input.Password id ='password' placeholder= 'Password' style = {{width:"29%"}}></Input.Password>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
-                                    {/* <Form.Item id = 'email'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter your Email"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width:"29%"
-                                        }}
-                                        > */}
-                                            <Input placeholder="Address" id = "address"  style = {{width:"29%"}}></Input>
-                                            
-                                    {/* </Form.Item> */}
+                                    <Input placeholder="Address" id = "address"  style = {{width:"29%"}}></Input>
                                 </Row>
-                                <Row>
+                                <Row style = {{marginTop: "1%"}}>
                                     <Col md ={6}>
-                                        {/* <Form.Item id = 'firstName'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter the First Name"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width : "57%"
-                                        }}
-                                        > */}
-                                            <Input id ='city' placeholder="City"  style = {{width : "57%"}} required></Input>
-                                        {/* </Form.Item> */}
+                                        <Input id ='city' placeholder="City"  style = {{width : "57%"}} required></Input>
                                     </Col>
                                     <Col md ={6}>
-                                    {/* <Form.Item id = 'lastName'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter the Last Name"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width : "57%",
-                                            marginLeft:"-41%"
-                                        }}
-                                        > */}
-                                            <Input id = 'state' placeholder="State"  style = {{ width : "57%",marginLeft:"-41%"}}></Input>
-                                    {/* </Form.Item> */}
+                                        <Input id = 'state' placeholder="State"  style = {{ width : "57%",marginLeft:"-41%"}}></Input>
                                     </Col>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
-                                {/* <Form.Item id = 'zipCode'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter your Zip Code"
-                                            }
-                                        ]}
-                                        style = {{width:"29%"}}
-                                        > */}
-                                            <Input type = 'number' id = 'zipCode' style = {{width:"29%"}} placeholder="Zip Code"></Input>
-                                    {/* </Form.Item> */}
+                                    <Input type = 'number' id = 'zipCode' style = {{width:"29%"}} placeholder="Zip Code"></Input>
                                 </Row>
                                 <Row style = {{marginTop:"1%"}}>
-                                    {/* <Form.Item id = 'email'
-                                        rules = {[
-                                            {
-                                                required : true,
-                                                message :"Please Enter your Email"
-                                            }
-                                        ]}
-                                        style = {{
-                                            width:"29%"
-                                        }}
-                                        > */}
-                                            <Input placeholder="Neighorhood" id = "neighborhood"  style = {{width:"29%"}}></Input>
-                                            
-                                    {/* </Form.Item> */}
+                                    <Input placeholder="Neighorhood" id = "neighborhood"  style = {{width:"29%"}}></Input>
                                 </Row>
                                 <h5 style={{marginTop:"1%"}}>You also understand that Yelp may send marketing</h5>
                                 <h5 style={{marginTop:"-1%"}}>emails about Yelp’s products, services, and local</h5>
@@ -304,7 +191,6 @@ class RestrauSignUp extends Component {
                                 <p style={{color:"grey", marginLeft:"11%", marginTop:"1%"}}>Already Member on yelp? <Link to = {{
                                     pathname : '/restrauSignIn'
                                 }}>Sign In</Link></p>
-                            {/* </Form> */}
                         </div>
                         <div>
                             <img style ={{marginLeft:"55%", marginTop:"-68%"}} src="https://s3-media0.fl.yelpcdn.com/assets/2/www/img/7922e77f338d/signup/signup_illustration.png" />

@@ -10,9 +10,12 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 var path = require('path');
 const date = require('date-and-time');
+const mongoConnection = require('./config')
 let connection = require("./database")
 app.set('view engine', 'ejs');
-
+var kafka = require('./kafka/client')
+var Customers = require('./Models/userModel')
+// var mongoose = require('mongoose')
 module.exports = app
 //use cors to allow cross origin resource sharing
 app.use(express.static('public'))
@@ -133,27 +136,9 @@ app.post("/getUserEvents" , customerEventsRouter.getUserEvents);
 app.post("/searchEvents", customerEventsRouter.searchEvents);
 app.post("/search", customerFilterRouter.search);
 app.post("/finalFilter", customerFilterRouter.finalFilter);
-
-
-
-app.post("/uploadPhoto", upload.single('Image'), function(req, res){
-    var UserId = req.body.UserId
-    var query = "UPDATE user_table SET profile_photo = '" + req.file.path +"' WHERE user_id = '"+ UserId +"'";
-    connection.query(query, (err, result) => {
-        if(err)
-        {
-            console.log(err)
-            res.writeHead(500, {
-                "Content-Type" : "text/plain"
-            })
-            res.end("Server Side Error")
-        }
-        res.end(JSON.stringify(req.file))
-    });
-})
+app.post("/uploadPhoto", upload.single('Image'),  customerDetailsRouter.uploadProfileImage);
 app.get("/getProfileImage/:userid", (req, res) => {
-    var query = "SELECT profile_photo FROM user_table WHERE user_id = '"+ req.params.userid +"'";
-    connection.query(query, (err, result) => {
+    Customers.findOne({_id : req.params.userid}, (err, result) => {
         if(err)
         {
             console.log(err)
@@ -162,20 +147,18 @@ app.get("/getProfileImage/:userid", (req, res) => {
             })
             res.end("Server Side Error")
         }
-        if(result)
+        if(result !== undefined)
         {
-            if(result[0].profile_photo === null)
+            if(result.profile_photo)
             {
-                res.sendFile(__dirname +"/public/profile_images/user.png")
+                res.sendFile( __dirname + "/" + result.profile_photo);
             }
             else{
-                res.sendFile( __dirname + "/" + result[0].profile_photo);
+                res.sendFile(__dirname +"/public/profile_images/user.png")
             }
         }
-        
-        
+
     })
-   
 })
 app.post("/uploadRestrauProfilePic", upload.single('Image'), function(req, res){
     var restrauId = req.body.restrauId
@@ -293,6 +276,14 @@ app.post("/getRestraurantImages", (req, res) =>{
         }
     })
 })
+
+
+
+
+
+
+
+
 app.listen(8080)
 console.log("Server Listening on port 8080");
 

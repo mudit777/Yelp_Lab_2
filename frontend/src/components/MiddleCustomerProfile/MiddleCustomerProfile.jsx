@@ -45,7 +45,11 @@ class MiddleCustomerProfile extends Component {
         {
             if(this.props.user)
         {
-            var filename = this.props.user.profile_photo.split('public').pop()
+            var filename = "/profile_images/user.png"
+            if(this.props.user.profile_photo)
+            {
+                filename = this.props.user.profile_photo.split('public').pop()
+            }
             this.setState({
                 name : this.props.user.first_name + " " + this.props.user.last_name,
                 image : `${BACKEND}` +  filename
@@ -68,7 +72,11 @@ class MiddleCustomerProfile extends Component {
            
             if(this.props.user)
             {
-                var filename = this.props.user.profile_photo.split('public').pop()
+                var filename = "/profile_images/user.png"
+                if(this.props.user.profile_photo)
+                {
+                    filename = this.props.user.profile_photo.split('public').pop()
+                }
                 this.setState({
                     name : this.props.user.first_name + " " + this.props.user.last_name,
                     image : `${BACKEND}` +  filename
@@ -83,7 +91,10 @@ class MiddleCustomerProfile extends Component {
         if(this.props.user)
         {
             name = this.props.user.first_name + " " + this.props.user.last_name
-            location = this.props.user.city + ", " + this.props.user.state
+            if(this.props.user.city !== undefined && this.props.user.state !== undefined)
+            {
+                location = this.props.user.city + ", " + this.props.user.state
+            }
         }
         return (
             <div>

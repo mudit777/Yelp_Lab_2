@@ -18,7 +18,7 @@ export function customerLogin(payload){
                       'User successfully signed in',
                   });
                   window.sessionStorage.setItem("isLoggedIn", true)
-                  window.sessionStorage.setItem("UserId",response.data.user_id);
+                  window.sessionStorage.setItem("UserId",response.data._id);
                   data ={
                     message : "Successfully logged in",
                     user_id : response.data.user_id,
@@ -81,19 +81,11 @@ export function getCustomerProfile (payload) {
         axios.post(`${BACKEND}/getUserDetails`, payload).then(response => {
             if(response.status === 200)
             {
-                // this.setState({
-                //     name : response.data.first_name + " " + response.data.last_name.charAt(0) + ".",
-                //     first_name : response.data.first_name
-                // })
-                window.sessionStorage.setItem('Name', response.data.first_name + " " + response.data.last_name.charAt(0) + ".")
+                // window.sessionStorage.setItem('Name', response.data.first_name + " " + response.data.last_name.charAt(0) + ".")
                 if(response.data.profile_photo === null)
                 {
                 }
-                // else{
-                //     // this.setState({
-                //     //     imageUrl : "http://localhost:8080/" + response.data.profile_photo,
-                //     // })
-                // }
+                console.log("User is ", response.data)
                 Object.keys(response.data).forEach(function(key) {
                     if(response.data[key] === null || response.data[key] === "null") {
                         response.data[key] = '';
@@ -140,8 +132,9 @@ export function getCustomerProfile (payload) {
         }).catch(err => {
             if(err)
             {
+                console.log(err)
                 notification["error"]({
-                    message: 'Server Sider error',
+                    message: 'Server Sider errorrrrrrr',
                     description:
                       'Please try again in few minutes',
                   });

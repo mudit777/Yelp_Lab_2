@@ -8,6 +8,7 @@ import { faBriefcase, faCalendar, faUtensils} from '@fortawesome/free-solid-svg-
 import 'antd/dist/antd.css';
 import Avatar from 'antd/lib/avatar/avatar';
 import { BACKEND } from '../../Config';
+import { connect } from 'react-redux';
 
 class LandingPage extends Component {
     constructor(props)
@@ -57,11 +58,13 @@ class LandingPage extends Component {
         window.location.href = "/restrauSignUp"
     }
     render() {
+        console.log(sessionStorage)
         var temp1 = null
         var temp2 = null
         var temp3 = null
         if(sessionStorage.getItem('isLoggedIn') === 'true')
         {
+            console.log(this.props.user)
             temp1 = <Link to = '/customerProfile'><Avatar size = {50}  style = {{marginLeft : "58%"}} src = {`${BACKEND}/getProfileImage/` +  window.sessionStorage.getItem("UserId")} /></Link>
         }
         else
@@ -111,8 +114,6 @@ class LandingPage extends Component {
                                 </Row>
                             </li>
                         </ul>
-                        
-                        
                     </div>
                 </div>
             </div>
@@ -120,4 +121,19 @@ class LandingPage extends Component {
     }
 }
 
-export default LandingPage;
+// export default LandingPage;
+// export default MiddleCustomerProfile;
+function mapDispatchToProps(dispatch) {
+    return {
+        // getCustomerProfile: user => dispatch(getCustomerProfile(user))
+    };
+  }
+  
+  function mapStateToProps(store) {
+    return {
+        user : store.user
+    };
+  }
+ 
+  const landingPage = connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+  export default landingPage;
