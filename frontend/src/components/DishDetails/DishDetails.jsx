@@ -11,16 +11,16 @@ class DishDetails extends Component {
     constructor(props)
     {
         super(props);
-       
+        var filename = props.dish.photo.split('public').pop();
         if(window.sessionStorage.getItem('isLoggedIn') === 'true')
         {
             this.state = {
-                id : this.props.dish.dish_id,
+                id : this.props.dish._id,
                 name : this.props.dish.dish_name,
                 type : this.props.dish.dish_type,
                 price : this.props.dish.price,
                 description : this.props.dish.description,
-                image : `${BACKEND}/getDishImage/` + this.props.dish.dish_id,
+                image : `${BACKEND}` + filename,
                 source : "",
                 restraurant_id : this.props.dish.restraurant_id,
             }
@@ -31,7 +31,9 @@ class DishDetails extends Component {
     addDishToCart = (id) => {
         if(window.sessionStorage.getItem("OrderRestrauId"))
         {
-            if(this.state.restraurant_id === parseInt(window.sessionStorage.getItem("OrderRestrauId")))
+            console.log("New dish id is = ", this.state.restraurant_id)
+            console.log("Old dish id is ", )
+            if(this.state.restraurant_id === window.sessionStorage.getItem("OrderRestrauId"))
             {
                 //add
                 this.addToCart();
@@ -74,6 +76,7 @@ class DishDetails extends Component {
             console.log("hey")
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
+        console.log("session is ", sessionStorage)
         return (
             <div>
                 {redirectVar}

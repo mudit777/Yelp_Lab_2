@@ -1,16 +1,14 @@
-var express = require('express');
 const {ObjectId} = require('mongodb');
-var Customers = require('../Models/userModel')
+var Carts = require('../../../Models/cartModel');
 
 function handle_request(message, callback)
 {
-    Customers.updateOne({_id : ObjectId(message.UserId)}, {$set : { profile_photo : message.path}}, (err, result) => {
+    Carts.remove({_id : ObjectId(message.cart_id)}, (err, result) => {
         if(err)
         {
             callback(null, 500);
         }
-        else
-        {
+        else{
             callback(null, 200);
         }
     })

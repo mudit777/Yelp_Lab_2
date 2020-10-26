@@ -137,6 +137,7 @@ app.post("/searchEvents", customerEventsRouter.searchEvents);
 app.post("/search", customerFilterRouter.search);
 app.post("/finalFilter", customerFilterRouter.finalFilter);
 app.post("/uploadPhoto", upload.single('Image'),  customerDetailsRouter.uploadProfileImage);
+app.post("/uploadRestrauProfilePic", upload.single('Image'), restraurantDetailsRouter.updateRestrauProfilePic);
 app.get("/getProfileImage/:userid", (req, res) => {
     Customers.findOne({_id : req.params.userid}, (err, result) => {
         if(err)
@@ -160,25 +161,7 @@ app.get("/getProfileImage/:userid", (req, res) => {
 
     })
 })
-app.post("/uploadRestrauProfilePic", upload.single('Image'), function(req, res){
-    var restrauId = req.body.restrauId
-    var query = "UPDATE restraurant_table SET photo = '" + req.file.path +"' WHERE restraurant_id = '"+ restrauId +"'";
-    connection.query(query, (err, result) => {
-        if(err)
-        {
-            console.log(err)
-            res.writeHead(500, {
-                "Content-Type" : "text/plain"
-            })
-            res.end("Server Side Error")
-        }
-        if(result)
-        {
-            res.end(JSON.stringify(req.file))
-        }
-        
-    });
-})
+
 app.get("/getRestrauProfileImage/:restrauId", (req, res) => {
     var query = "SELECT photo FROM restraurant_table WHERE restraurant_id = '"+ req.params.restrauId +"'";
     connection.query(query, (err, result) => {
@@ -216,7 +199,7 @@ app.get("/getDishImage/:dishId", (req, res) => {
             })
             res.end("Server Side Error")
         }
-        if(result[0].photo === null)   
+        if(result[0].photo === null)  
         {
             res.sendFile(__dirname +"/public/profile_images/user.png")
         }

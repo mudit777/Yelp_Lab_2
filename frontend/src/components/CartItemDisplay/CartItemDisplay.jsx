@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 class CartItemDisplay extends Component {
     constructor(props){
         super(props);
+        console.log("Cart item details props are", props)
         this.state = {
             dish :"",
             dishQuantity : 0
@@ -16,16 +17,19 @@ class CartItemDisplay extends Component {
             var cart = {
                 cart_id : props.item
             }
+            console.log("Hiiiiiix")
             // this.props.get_cart_item_details(cart)
             Axios.post(`${BACKEND}/getCartItemDetails`, cart).then(response => {
                 if(response.status === 200)
                 {
+                    console.log("cart response is ", response)
                     var dish = {
                         dish_id : response.data.dish_id
                     }
                     Axios.post(`${BACKEND}/getDishDetails`, dish).then(dishResponse => {
                         if(dishResponse.status === 200)
                         {
+                            console.log("Response of dish ", dish);
                             this.setState({
                                 dish : dishResponse.data.dish_name,
                                 dishQuantity : response.data.quantity
@@ -42,6 +46,8 @@ class CartItemDisplay extends Component {
                         }
                     })
                 }
+            }).catch(err => {
+                console.log(err);
             })
         }
         

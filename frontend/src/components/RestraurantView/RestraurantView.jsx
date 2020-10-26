@@ -39,6 +39,7 @@ class RestraurantView extends Component {
             let myJson = {
                 RestrauId : this.props.history.location.state.id
             }
+            console.log("Restraurant is ", myJson)
             this.props.get_customer_restraurant_details(myJson)
             var restraurant = {
                 restraurant_id : this.props.history.location.state.id
@@ -50,18 +51,21 @@ class RestraurantView extends Component {
     }
     componentWillReceiveProps(){
         setTimeout(() => {
-            this.setState({
-                id : this.props.customer_restraurant.restraurant_id,
-                name : this.props.customer_restraurant.restraurant_name,
-                reviews : this.props.customer_restraurant.reviews,
-                cusine : this.props.customer_restraurant.cusine,
-                weekday : this.props.customer_restraurant.weekdays_timings,
-                weekend : this.props.customer_restraurant.weekend_timings,
-                reviewsCount : this.props.customer_restraurant.reviews_count,
-                email : this.props.customer_restraurant.email,
-                phoneNumber : this.props.customer_restraurant.phone_number,
-                dishes : this.props.customer_restraurant_dishes
-            })
+            if(this.props.customer_restraurant)
+            {
+                this.setState({
+                    id : this.props.customer_restraurant._id,
+                    name : this.props.customer_restraurant.restraurant_name,
+                    reviews : this.props.customer_restraurant.reviews,
+                    cusine : this.props.customer_restraurant.cusine,
+                    weekday : this.props.customer_restraurant.weekdays_timings,
+                    weekend : this.props.customer_restraurant.weekend_timings,
+                    reviewsCount : this.props.customer_restraurant.reviews_count,
+                    email : this.props.customer_restraurant.email,
+                    phoneNumber : this.props.customer_restraurant.phone_number,
+                    dishes : this.props.customer_restraurant_dishes
+                })
+            }
             if(this.props.message === "Review Inserted")
             {
                 this.setState({
@@ -155,6 +159,13 @@ class RestraurantView extends Component {
         {
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
+        var temp = null;
+        if(this.props.customer_restraurant_dishes)
+        {
+            temp = this.props.customer_restraurant_dishes.map(i => {
+                return <DishDetails source = "Customer" key = {i._id} dish = {i} style={{width:"40%"}}/>
+            })
+        }
         return (
             <div>
                 {redirectVar}
@@ -199,9 +210,7 @@ class RestraurantView extends Component {
                     <Row>
                          <Col md = {8}>
                             <div className="dishes">
-                                {this.state.dishes.map(i => {
-                                return <DishDetails source = "Customer" key = {i.dish_id} dish = {i} style={{width:"40%"}}/>
-                            })}
+                                {temp}
                             </div>
                         </Col> 
                         <Col md = {4} style ={{marginLeft:"25%", marginTop:"3.3%"}}>

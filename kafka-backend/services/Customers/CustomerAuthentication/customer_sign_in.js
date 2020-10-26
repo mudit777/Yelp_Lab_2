@@ -2,9 +2,7 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-// var Customers = require('../../backend/Models/userModel')
-var Customers = require('../Models/userModel')
-var database = require('../database')
+var Customers = require('../../../Models/userModel')
 function handle_request(message, callback)
 {
     Customers.findOne({email : message.email} , function(err, customer){

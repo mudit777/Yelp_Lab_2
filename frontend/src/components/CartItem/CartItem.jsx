@@ -11,31 +11,33 @@ import Axios from 'axios';
 class CartItem extends Component {
     constructor(props){
         super(props);
-        console.log("Props are ", props)
+        console.log("cartitem Props are ", props)
+        var filename = props.cartItem.dish.photo.split('public').pop();
         this.state = {
-            cartId : props.cartItem.cart_id,
+            cartId : props.cartItem._id,
             dishId : props.cartItem.dish_id,
             restraurantId : props.cartItem.restraurant_id,
             activeQuantity : props.cartItem.quantity,
             dishName : props.cartItem.dish.dish_name,
             price : props.cartItem.dish.price,
-            image : `${BACKEND}/getDishImage/` + props.cartItem.dish_id,
+            image : `${BACKEND}` + filename,
             type: props.cartItem.dish.dish_type,
             description : props.cartItem.dish.description,
             amount : 0
         }
+        this.props.callBackFromCartItem(Number(props.cartItem.dish.price) * Number(props.cartItem.quantity)  , props.cartItem.dish_id)
     }
     // componentWillReceiveProps(){
-    //     setTimeout(() => {
-    //         this.props.callBackFromCartItem(Number(this.props.customer_current_dish_details.price) * Number(this.state.activeQuantity)  , this.state.dishId)
-    //        this.setState({
-    //         dishName : this.props.customer_current_dish_details.dish_name,
-    //         price : this.props.customer_current_dish_details.price,
-    //         image : `${BACKEND}/getDishImage/` + this.state.dishId,
-    //         type: this.props.customer_current_dish_details.dish_type,
-    //         description : this.props.customer_current_dish_details.description
-    //        }) 
-    //     }, );
+        // setTimeout(() => {
+        //     this.props.callBackFromCartItem(Number(this.props.customer_current_dish_details.price) * Number(this.state.activeQuantity)  , this.state.dishId)
+        //    this.setState({
+        //     dishName : this.props.customer_current_dish_details.dish_name,
+        //     price : this.props.customer_current_dish_details.price,
+        //     image : `${BACKEND}/getDishImage/` + this.state.dishId,
+        //     type: this.props.customer_current_dish_details.dish_type,
+        //     description : this.props.customer_current_dish_details.description
+        //    }) 
+        // }, );
     // }
     componentDidMount(){
         this.checkQuantity();

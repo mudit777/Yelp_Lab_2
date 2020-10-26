@@ -36,7 +36,7 @@ class RestraurantOrderDetails extends Component {
         }
         var cartItems = this.props.order.items.split(',')
         this.state = {
-            order_id : props.order.order_id,
+            order_id : props.order._id,
             user_id : props.order.user_id,
             restraurant_id : props.order.restraurant_id,
             items : props.order.items,
@@ -83,7 +83,7 @@ class RestraurantOrderDetails extends Component {
            
             var cartItems = this.props.order.items.split(',')
             this.setState({
-                order_id : this.props.order.order_id,
+                order_id : this.props.order._id,
                 user_id : this.props.order.user_id,
                 restraurant_id : this.props.order.restraurant_id,
                 items : this.props.order.items,
@@ -111,7 +111,7 @@ class RestraurantOrderDetails extends Component {
             status : "preparing"
         }
         this.setState({
-            state : "preparing",
+            status : "preparing",
             percentage : 50
         })
         this.props.update_order_status(order)
@@ -260,7 +260,7 @@ class RestraurantOrderDetails extends Component {
                             <Col md = {6}>
                                 <ul style = {{listStyleType:"none"}}>
                                     <li>
-                                        <h4>OrderId : {this.props.order.order_id}</h4>
+                                        <h4>OrderId : {this.props.order._id}</h4>
                                     </li>
                                     <li>
                                         <h4>Amount: ${this.props.order.amount}</h4>
@@ -289,7 +289,7 @@ class RestraurantOrderDetails extends Component {
                                     "100%": "#d32323"
                                 }}
                                 percent = {this.state.percentage}
-                                format={(percent) => `${this.props.order.status}`} 
+                                format={(percent) => `${this.state.status}`} 
                                 />
                             </Col>
                         </Row>

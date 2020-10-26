@@ -10,7 +10,7 @@ class Dish extends Component {
         super(props);
         var filename = props.dish.photo.split('public').pop();
         this.state = {
-            id : props.dish.dish_id,
+            id : props.dish._id,
             name : props.dish.dish_name,
             type : props.dish.dish_type,
             price : props.dish.price,
@@ -30,12 +30,12 @@ class Dish extends Component {
         setTimeout(() => {
             
             this.state = {
-                id : this.props.dish.dish_id,
+                id : this.props.dish._id,
                 name : this.props.dish.dish_name,
                 type : this.props.dish.dish_type,
                 price : this.props.dish.price,
                 description : this.props.dish.description,
-                image : `${BACKEND}/getDishImage/` + this.props.dish.dish_id,
+                image : `${BACKEND}/getDishImage/` + this.props.dish._id,
                 source : "",
             }
         })

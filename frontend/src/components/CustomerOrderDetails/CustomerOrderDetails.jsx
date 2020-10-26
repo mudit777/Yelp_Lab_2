@@ -10,8 +10,10 @@ import { connect } from "react-redux";
 class CustomerOrderDetails extends Component {
     constructor(props){
         super(props);
+        var filename = props.order.restraurant.photo.split('public').pop();
+        
         this.state = {
-            order_id: props.order.order_id,
+            order_id: props.order._id,
             restraurant_id : props.order.restraurant_id,
             items : props.order.items,
             status : props.order.status,
@@ -20,7 +22,7 @@ class CustomerOrderDetails extends Component {
             time_placed : props.order.time_placed,
             restraurant_name : "",
             cartDishes : [],
-            profileImage : "",
+            profileImage : `${BACKEND}` + filename,
             percentage : 0,
             restraurant : props.order.restraurant
         }
@@ -49,8 +51,9 @@ class CustomerOrderDetails extends Component {
                 break
         }
         var cartItems = this.state.items.split(',');
+        var filename = this.props.order.restraurant.photo.split('public').pop();
         this.setState({
-            order_id : this.props.order.order_id,
+            order_id : this.props.order._id,
             user_id : this.props.order.user_id,
             restraurant_id : this.props.order.restraurant_id,
             items : this.props.order.items,
@@ -59,7 +62,7 @@ class CustomerOrderDetails extends Component {
             percentage : per,
             restraurant_name : this.props.order.restraurant.restraurant_name,
             cartDishes : cartItems,
-            profileImage : `${BACKEND}/getRestrauProfileImage/` + this.props.order.restraurant.restraurant_id,
+            profileImage : `${BACKEND}` + filename,
         })
         
     }
@@ -67,7 +70,6 @@ class CustomerOrderDetails extends Component {
     
     render() {
         var temp = null
-        
         return (
             <div>
                 <div className = "orderDetails" id ="orderDetailsDiv">

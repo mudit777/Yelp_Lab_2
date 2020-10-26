@@ -21,7 +21,7 @@ export function customerLogin(payload){
                   window.sessionStorage.setItem("UserId",response.data._id);
                   data ={
                     message : "Successfully logged in",
-                    user_id : response.data.user_id,
+                    user_id : response.data._id,
                     user : response.data,
                     authFlag : true
                   }
@@ -418,35 +418,47 @@ export function filter_customer_orders(payload)
             {
                 var result = []
                 var count = 0
-                for(let i in response.data)
+                console.log("Length of response is : ", response.data.length)
+                if(response.data.length > 1)
                 {
-                    let order = response.data[i];
-                    var restraurant = {
-                        RestrauId : order.restraurant_id
-                    }
-
-                    let temp = async () => {
-                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
-                        return restrauResponse;                   
-                    }
-                    temp().then(restraurantResponse=>{
-                        if(restraurantResponse.status === 200)
-                        {
-                            order = {...order, restraurant : restraurantResponse.data}
-                            result.push(order)
-                            count++;
-                            console.log("Count is ", count)
-                            if(count === response.data.length)
+                    for(let i in response.data)
+                    {
+                        let order = response.data[i];
+                        var restraurant = {
+                            RestrauId : order.restraurant_id
+                        }
+    
+                        let temp = async () => {
+                            const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                            return restrauResponse;                   
+                        }
+                        temp().then(restraurantResponse=>{
+                            if(restraurantResponse.status === 200)
                             {
-                                data = { 
-                                    customer_orders : result,
-                                    message : "Customer Orders updated"
+                                order = {...order, restraurant : restraurantResponse.data}
+                                result.push(order)
+                                count++;
+                                console.log("Count is ", count)
+                                if(count === response.data.length)
+                                {
+                                    data = { 
+                                        customer_orders : result,
+                                        message : "Customer Orders updated"
+                                    }
+                                    dispatch({type : FILTER_CUSTOMER_ORDERS, data})
                                 }
-                                dispatch({type : FILTER_CUSTOMER_ORDERS, data})
-                            }
-                        }        
-                    })
+                            }        
+                        })
+                    }
                 }
+                else{
+                    data = { 
+                        customer_orders : response.data,
+                        message : "Customer Orders updated"
+                    }
+                    dispatch({type : FILTER_CUSTOMER_ORDERS, data})
+                }
+                
             }
         }).catch()
     }   

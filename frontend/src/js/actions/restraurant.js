@@ -8,7 +8,7 @@ export function restraurant_sign_in(payload)
     let data = {};
     return(dispatch) => {
         axios.post(`${BACKEND}/restrauSignIn`, payload).then(response => {
-            if(response.status)
+            if(response.status === 200)
             {
                 notification["success"]({
                     message: 'User SignedIn',
@@ -102,6 +102,7 @@ export function get_restraurant_profile(payload)
 export function get_restraurant_dishes(payload)
 {
     let data = {}
+    console.log("Payload is", payload)
     return(dispatch) => {
         axios.post(`${BACKEND}/getDishes`, payload).then(response => {
             if(response.status === 200)
@@ -293,8 +294,9 @@ export function add_dish(payload)
         }).catch(err => {
             if(err)
             {
+                console.log(err)
                 notification["error"]({
-                    message: 'Server Sider error',
+                    message: 'Server Sider errorrr',
                     description:
                     'Please try again in few minutes',
                 });
@@ -497,9 +499,11 @@ export function add_event(payload)
 {
     let data = {}
     return(dispatch) => {
-        axios.post(`${BACKEND}/addEvent`, payload).then(response => {
+        axios.post(`${BACKEND}/addEvent`, payload).then(response => { 
+            console.log("response is: ", response)
             if(response.status === 200)
             {
+                
                 setTimeout(() => {
                     notification["success"]({
                         message: 'Event added',

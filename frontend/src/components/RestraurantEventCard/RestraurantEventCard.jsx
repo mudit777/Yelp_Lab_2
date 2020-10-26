@@ -14,11 +14,11 @@ class RestraurantEventCard extends Component {
             visible : false,
             users : []
         }
-        console.log(props)
+        console.log("--------------------------------",props)
     }
     openModel = () => {
         var event = {
-            event_id : this.props.event.event_id
+            event_id : this.props.event._id
         }
         this.setState({
             visible : true

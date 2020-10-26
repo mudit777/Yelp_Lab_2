@@ -3,7 +3,7 @@ var router = express.Router();
 const date = require('date-and-time');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-var Customers = require('../Models/userModel');
+var Customers = require('../../../Models/userModel')
 // var database = require('../database')
 function handle_request(message, callback){
 

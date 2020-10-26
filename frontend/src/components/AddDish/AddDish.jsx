@@ -29,6 +29,7 @@ class AddDish extends Component {
     componentDidMount() {
         if(window.sessionStorage.getItem('RestrauLoggedIn'))
         {
+            console.log("id is ===========", this.props.history.location.state.id )
             this.setState({
                 dish_id : this.props.history.location.state.id 
             })
@@ -47,18 +48,26 @@ class AddDish extends Component {
     componentWillReceiveProps()
     {
         setTimeout(() => {
-            var fileName = this.props.current_dish_details.photo.split('public').pop();
-            this.setState({
-                current_dish : this.props.current_dish_details,
-                photo : `${BACKEND}` + fileName,
-                dishName : this.props.current_dish_details.dish_name,
-                dishType : this.props.current_dish_details.dish_type,
-                description : this.props.current_dish_details.description,
-                price : this.props.current_dish_details.price,
-                dishId : this.props.current_dish_details.dish_id,
-                ingredients : this.props.current_dish_details.dish_ingredients,
-                source : this.props.current_dish_details.photo
-            })
+            var fileName = "";
+            if(this.props.current_dish_details)
+            {
+                if(this.props.current_dish_details.photo)
+                {
+                    fileName = this.props.current_dish_details.photo.split('public').pop();
+                }
+                this.setState({
+                    current_dish : this.props.current_dish_details,
+                    photo : `${BACKEND}` + fileName,
+                    dishName : this.props.current_dish_details.dish_name,
+                    dishType : this.props.current_dish_details.dish_type,
+                    description : this.props.current_dish_details.description,
+                    price : this.props.current_dish_details.price,
+                    dishId : this.props.current_dish_details._id,
+                    ingredients : this.props.current_dish_details.dish_ingredients,
+                    source : this.props.current_dish_details.photo
+                })
+            }
+            
             if(this.props.dishUpdatedFlag === true)
             {
                 this.setState({
@@ -134,10 +143,12 @@ class AddDish extends Component {
             }
             if(this.state.dishId === 0)
             {
-                this.props.add_dish(dish);
+                console.log("dish is ", dish)
+                // this.props.add_dish(dish);
             }
             else{
                 dish['dish_id'] = this.state.dishId;
+                console.log("Dish to be updated ", dish)
                 this.props.update_dish(dish);
             }
            

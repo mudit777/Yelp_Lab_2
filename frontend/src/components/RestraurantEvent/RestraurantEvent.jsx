@@ -40,6 +40,14 @@ class RestraurantEvent extends Component {
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
         var temp = null;
+        if(this.props.restraurant_events)
+        {
+            temp = this.props.restraurant_events.map(i => {
+                return(
+                    <RestraurantEventCard event = {i} key = {i.event_id} />
+                )
+            })
+        }
         if(this.state.events.length === 0)
         {
             temp = <div>
@@ -127,11 +135,7 @@ class RestraurantEvent extends Component {
                         </Col>
                         <Col md = {8}>
                             {temp}
-                            {this.state.events.map(i => {
-                                return(
-                                    <RestraurantEventCard event = {i} key = {i.event_id} />
-                                )
-                            })}
+                            
                         </Col>
                     </Row>
                 </div>

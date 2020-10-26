@@ -118,6 +118,7 @@ class LowerRestrauProfile extends Component {
               });
         }
         else{
+            console.log("calling to add event")
             this.props.add_event(event)
         }
         

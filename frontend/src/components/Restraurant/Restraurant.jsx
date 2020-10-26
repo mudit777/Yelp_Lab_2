@@ -9,12 +9,15 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 class Restraurant extends Component {
     constructor(props){
         super(props);
+        var filename = props.restraurant.photo.split('public').pop();
+
+        console.log("Props of restraurant are ", props)
         this.state = {
-            restrauId : props.restraurant.restraurant_id,
+            restrauId : props.restraurant._id,
             name : props.restraurant.restraurant_name,
             description : props.restraurant.description,
             location : props.restraurant.location,
-            photo : `${BACKEND}/getRestrauProfileImage/` + props.restraurant.restraurant_id,
+            photo : `${BACKEND}` + filename,
             weekday : props.restraurant.weekdays_timings,
             weekend : props.restraurant.weekend_timings,
             zipcode : props.restraurant.zip_code,
@@ -66,7 +69,7 @@ class Restraurant extends Component {
                 <div>
                     <Link to = {{
                         pathname : "/restraurantDetails",
-                        state: {id : this.props.restraurant.restraurant_id}
+                        state: {id : this.props.restraurant._id}
                     }}>
                         <Card  style={{ width: "200%", marginTop:"5%", boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)" }}>
                             <Row >

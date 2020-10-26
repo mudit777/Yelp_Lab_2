@@ -224,7 +224,7 @@ function rootReducer(state = initialState, action)
     }
     else if(action.type === ADD_DISH)
     {
-      return Object.assign({}. state, {
+      return Object.assign({}, state, {
         dishUpdatedFlag : action.data.dishUpdatedFlag,
         message : action.data.message
       })

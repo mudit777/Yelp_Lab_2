@@ -28,11 +28,20 @@ class MiddleRestraurantProfile extends Component {
        
         if(this.props.restraurant)
         {
-            var fileName = this.props.restraurant.photo.split('public').pop()
-            this.setState({
-                restraurant : this.props.restraurant,
-                image : `${BACKEND}` +  fileName
-            })
+            if(this.props.restraurant.photo)
+            {
+                var fileName = this.props.restraurant.photo.split('public').pop()
+                this.setState({
+                    restraurant : this.props.restraurant,
+                    image : `${BACKEND}` +  fileName
+                })
+            }
+            else{
+                this.setState({
+                    restraurant : this.props.restraurant,
+                    image : `${BACKEND}` + "/profile_images/user.png"
+                })
+            }
         }
         else {
             var myJson = {
@@ -43,11 +52,25 @@ class MiddleRestraurantProfile extends Component {
     }
     componentWillReceiveProps(){
         setTimeout(() => {
-            var fileName = this.props.restraurant.photo.split('public').pop()
-            this.setState({
-                restraurant : this.props.restraurant,
-                image : `${BACKEND}` +  fileName
-            })
+            if(this.props.restraurant.photo)
+            {
+                var fileName = this.props.restraurant.photo.split('public').pop()
+                this.setState({
+                    restraurant : this.props.restraurant,
+                    image : `${BACKEND}` +  fileName
+                })
+            }
+            else{
+                this.setState({
+                    restraurant : this.props.restraurant,
+                    image : `${BACKEND}` + "/profile_images/user.png"
+                })
+            }
+                // var fileName = this.props.restraurant.photo.split('public').pop()
+                // this.setState({
+                //     restraurant : this.props.restraurant,
+                //     image : `${BACKEND}` +  fileName
+                // })
         })
     }
     // getRestrauDetails = () => {

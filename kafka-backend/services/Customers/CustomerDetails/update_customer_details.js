@@ -1,6 +1,6 @@
 var express = require('express');
 const {ObjectId} = require('mongodb');
-var Customers = require('../Models/userModel')
+var Customers = require('../../../Models/userModel')
 
 function handle_request(message, callback)
 {

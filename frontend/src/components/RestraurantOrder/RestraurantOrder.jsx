@@ -338,7 +338,6 @@ class RestraurantOrder extends Component {
                         </Col>
                         <Col md = {8}>
                             {temp}
-                            
                         </Col>
                     </Row>
                     

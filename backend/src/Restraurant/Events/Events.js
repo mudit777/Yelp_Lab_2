@@ -1,22 +1,19 @@
-var express = require('express');
-var router = express.Router();
-var mysql = require('mysql');
-let connection = require("../../../database");
+const { response } = require('express');
+var kafka = require('../../../kafka/client'); 
 
 
 exports.addEvent = (req, res) => {
-    var query = "INSERT INTO `Yelp`.`event_table` SET " + mysql.escape(req.body);
-    connection.query(query, (err, result) => {
-        if(err)
+    kafka.make_request("add_event", req.body, (err, result) => {
+        if(result.code === 500)
         {
-            console.log(err)
             res.writeHead(500, {
                 "Content-Type" : "text/plain"
             })
             res.end("Server Side Error")
         }
-        if(result)
+        else if(result.code === 200)
         {
+            console.log("response is ------------", result)
             res.writeHead(200, {
                 'Content-Type' : 'text/plain'
             })
@@ -26,22 +23,20 @@ exports.addEvent = (req, res) => {
 }
 
 exports.getRestraurantEvents = (req, res) => {
-    var query = "SELECT * FROM event_table WHERE restraurant_id =  '"+ req.body.restraurant_id +"'";
-    connection.query(query, (err, result) => {
-        if(err)
+    kafka.make_request("get_restraurant_events", req.body, (err, result) => {
+        if(result.code === 500)
         {
-            console.log(err)
             res.writeHead(500, {
                 "Content-Type" : "text/plain"
             })
             res.end("Server Side Error")
         }
-        if(result)
+        else if(result.code === 200)
         {
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             })
-            res.end(JSON.stringify(result))
+            res.end(JSON.stringify(result.data))
         }
     })
 }
@@ -57,7 +52,6 @@ exports.getUsersOfAnEvent = (req, res) => {
             })
             res.end("Server Side Error")
         }
-        // if(result)
         else
         {
             res.writeHead(200, {

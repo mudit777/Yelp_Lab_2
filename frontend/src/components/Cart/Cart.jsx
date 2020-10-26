@@ -30,12 +30,15 @@ class Cart extends Component {
         if(window.sessionStorage.getItem('isLoggedIn') === 'true')
         {
             // this.getUserCartDetails();
-            this.props.get_user_cart_details()
-            var restraurant = {
-                RestrauId : window.sessionStorage.getItem("OrderRestrauId")
+            this.props.get_user_cart_details();
+            if(this.props.cartItems)
+            {
+                var restraurant = {
+                    RestrauId : window.sessionStorage.getItem("OrderRestrauId")
+                }
+                console.log("Customer restraurant is: ", restraurant)
+                this.props.get_customer_restraurant_details(restraurant)
             }
-            this.props.get_customer_restraurant_details(restraurant)
-            
         }
         
     }
@@ -45,24 +48,42 @@ class Cart extends Component {
                 cartItems : this.props.cartItems,
             })
             console.log("Restraurant is ", this.props.customer_restraurant)
-            if(this.props.customer_restraurant.delivery === 'no')
+            if(this.props.cartItems)
             {
-                setTimeout(() => {
-                    this.setState({
-                        deliveryVisible : false
-                    })
-                    document.getElementById("delivery").style.display = 'none'
-                }, 10)
+                if(this.props.customer_restraurant)
+                {
+
+                }
+                else {
+                    var restraurant = {
+                        RestrauId : window.sessionStorage.getItem("OrderRestrauId")
+                    }
+                    console.log("Customer restraurant is: ", restraurant)
+                    // this.props.get_customer_restraurant_details(restraurant)
+                }
             }
-            if(this.props.customer_restraurant.takeout === 'no')
+            if(this.props.customer_restraurant)
             {
-                setTimeout(() => {
-                    this.setState({
-                        takeOutVisible : false
-                    })
-                    document.getElementById("takeout").style.display = 'none'
-                }, 10)
+                if(this.props.customer_restraurant.delivery === 'no')
+                {
+                    setTimeout(() => {
+                        this.setState({
+                            deliveryVisible : false
+                        })
+                        document.getElementById("delivery").style.display = 'none'
+                    }, 10)
+                }
+                if(this.props.customer_restraurant.takeout === 'no')
+                {
+                    setTimeout(() => {
+                        this.setState({
+                            takeOutVisible : false
+                        })
+                        document.getElementById("takeout").style.display = 'none'
+                    }, 10)
+                }
             }
+            
             if(this.props.message === 'Cart Item Deleted')
             {
                 setTimeout(() => {
@@ -83,9 +104,11 @@ class Cart extends Component {
     calculateSubTotal = (price, key) => {
         var amount = 0;
         dict[key] = price
+        console.log("Dict is ", dict)
         Object.keys(dict).forEach(function(key) {
            amount = amount + parseInt(dict[key])
         })    
+
         var finalTax = (amount * 0.0725).toFixed(2)
         this.setState({
             subTotal : amount,
@@ -123,7 +146,7 @@ class Cart extends Component {
                 var cartItems = []
                 for(var i in this.props.cartItems)
                 {
-                    cartItems.push(this.props.cartItems[i].cart_id)
+                    cartItems.push(this.props.cartItems[i]._id)
                 }
                 var order = {
                     user_id : window.sessionStorage.getItem("UserId"),
