@@ -39,6 +39,8 @@ var get_customer_reviews = require('./services/Customers/CustomerReviews/get_cus
 var get_restraurant_reviews = require('./services/Restraurants/RestraurantReviews/get_restraurant_reviews');
 var search = require('./services/Customers/Filter/search');
 var final_filter = require('./services/Customers/Filter/final_filter');
+var upload_restraurant_images = require('./services/Restraurants/RestraurantDetails/upload_restraurant_images');
+var get_restraurant_images = require('./services/Restraurants/RestraurantDetails/get_restraurant_images');
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -109,3 +111,5 @@ handleTopicRequest("get_customer_reviews", get_customer_reviews);
 handleTopicRequest("get_restraurant_reviews", get_restraurant_reviews);
 handleTopicRequest("search", search);
 handleTopicRequest("final_filter", final_filter);
+handleTopicRequest("upload_restraurant_images", upload_restraurant_images);
+handleTopicRequest("get_restraurant_images", get_restraurant_images);

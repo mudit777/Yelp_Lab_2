@@ -5,13 +5,13 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var cors = require('cors');
-var mysql = require('mysql')
+// var mysql = require('mysql')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 var path = require('path');
 const date = require('date-and-time');
 const mongoConnection = require('./config')
-let connection = require("./database")
+// let connection = require("./database")
 app.set('view engine', 'ejs');
 var kafka = require('./kafka/client')
 var Customers = require('./Models/userModel')
@@ -138,6 +138,8 @@ app.post("/search", customerFilterRouter.search);
 app.post("/finalFilter", customerFilterRouter.finalFilter);
 app.post("/uploadPhoto", upload.single('Image'),  customerDetailsRouter.uploadProfileImage);
 app.post("/uploadRestrauProfilePic", upload.single('Image'), restraurantDetailsRouter.updateRestrauProfilePic);
+app.post("/uploadRestraurantImages", dish_upload.single('Image'), restraurantDetailsRouter.uploadRestraurantImages);
+app.post("/getRestraurantImages", restraurantDetailsRouter.getRestraurantImages);
 app.get("/getProfileImage/:userid", (req, res) => {
     Customers.findOne({_id : req.params.userid}, (err, result) => {
         if(err)
@@ -216,49 +218,27 @@ app.post("/uploadDishImage", dish_upload.single('Image'), function(req, res){
     })
     res.end(JSON.stringify(req.file.path))
 })
-app.post("/uploadRestraurantImages", dish_upload.single('Image'), function(req, res){
-    console.log(req)
-    var query = "INSERT INTO `Yelp`.`images_table` (`restraurant_id`, `image`) VALUES ('" + req.body.restraurant_id +"', '"+ req.file.path +"');";
-    connection.query(query, (err, result) => {
-        if(err)
-        {
-            console.log(err)
-            res.writeHead(500, {
-                "Content-Type" : "text/plain"
-            })
-            res.end("Server Side Error")
-        }
-        if(result)
-        {
-            res.writeHead(200, {
-                'Content-Type' : 'application/json'
-            })
-            res.end(JSON.stringify(req.file.path))
-        }
-    })
-    
-})
-app.post("/getRestraurantImages", (req, res) =>{
-    var query = "SELECT * FROM images_table WHERE restraurant_id = '"+ req.body.restraurant_id +"'";
-    connection.query(query, (err, result) => {
-        if(err)
-        {
-            res.writeHead(500, {
-                "Content-Type" : "text/plain"
-            })
-            res.end("Server Side Error")
-        }
-        // if(result)
-        else
-        {
-            console.log(result)
-            res.writeHead(200, {
-                'Content-Type' : 'application/json'
-            })
-            res.end(JSON.stringify(result))
-        }
-    })
-})
+// app.post("/getRestraurantImages", (req, res) =>{
+//     var query = "SELECT * FROM images_table WHERE restraurant_id = '"+ req.body.restraurant_id +"'";
+//     connection.query(query, (err, result) => {
+//         if(err)
+//         {
+//             res.writeHead(500, {
+//                 "Content-Type" : "text/plain"
+//             })
+//             res.end("Server Side Error")
+//         }
+//         // if(result)
+//         else
+//         {
+//             console.log(result)
+//             res.writeHead(200, {
+//                 'Content-Type' : 'application/json'
+//             })
+//             res.end(JSON.stringify(result))
+//         }
+//     })
+// })
 
 
 
