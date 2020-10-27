@@ -29,7 +29,6 @@ class Filter extends Component {
         }
     }
     getRestraurants = () => {
-        console.log(this.props.restraurants)
         var neighborhoods = [];
         this.props.restraurants.map(i => {
             neighborhoods.push(i.neighborhood)
@@ -129,7 +128,6 @@ function mapDispatchToProps(dispatch) {
   }
   
   function mapStateToProps(store) {
-      console.log("In restraurant view store is", store)
     return {
         restraurants : store.restraurants,
         message : store.message,

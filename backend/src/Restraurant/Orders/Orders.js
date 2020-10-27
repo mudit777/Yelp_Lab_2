@@ -44,69 +44,20 @@ exports.updateOrderStatus = (req, res) => {
 }
 
 exports.filterRestraurantOrders = (req, res) => {
-    var query = "";
-    var current = [
-        'delivered',
-        'picked up'
-    ]
-    switch(req.body.filter)
-    {
-        case "current":
-            current = [
-                'delivered',
-                'picked up',
-                'canceled'
-            ]
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND status  NOT IN ("+ mysql.escape(current) +")";
-            break;
-        case "past" :
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND status In ("+ mysql.escape(current) +")";
-            break;
-        case "currentDelivery":
-            current = [
-                'delivered',
-                'picked up',
-                'canceled'
-            ]
-            var mode = 'delivery'
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND order_type = '"+ mode +"'  AND status  NOT IN ("+ mysql.escape(current) +")";
-            break;
-        case "currentTakeout":
-            current = [
-                'delivered',
-                'picked up',
-                'canceled'
-            ]
-            var mode = 'takeout'
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND order_type = '"+ mode +"'  AND status  NOT IN ("+ mysql.escape(current) +")";
-            break;   
-        case "pastDelivery":
-            var mode = 'delivery'
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND order_type = '"+ mode +"'  AND status IN ("+ mysql.escape(current) +")";
-            break;
-        case "pastTakeout":
-            var mode = 'takeout'
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND order_type = '"+ mode +"'  AND status IN ("+ mysql.escape(current) +")";
-            break; 
-        case "canceled":
-            var mode = 'canceled'
-            query = "SELECT * FROM order_table WHERE restraurant_id = '"+ req.body.restraurant_id +"' AND status = '"+ mode +"'"
-    }
-    connection.query(query, (err, result) => {
-        if(err)
+    kafka.make_request("filter_restraurant_orders", req.body, (err, result) => {
+        if(result.code === 500)
         {
-            console.log(err)
             res.writeHead(500, {
                 "Content-Type" : "text/plain"
             })
             res.end("Server Side Error")
         }
-        if(result)
+        else if(result.code === 200)
         {
             res.writeHead(200,{
                 'Content-Type' : 'application/json'
             })
-            res.end(JSON.stringify(result))
+            res.end(JSON.stringify(result.data))
         }
     })
 }

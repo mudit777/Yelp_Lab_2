@@ -44,7 +44,7 @@ class CustomerEventRegistrationCard extends Component {
         })
         var event = {
      
-            event_id : this.props.event.event_id,
+            event_id : this.props.event._id,
             user_id : window.sessionStorage.getItem("UserId"),
             restraurant_id : this.props.event.restraurant_id,
         }

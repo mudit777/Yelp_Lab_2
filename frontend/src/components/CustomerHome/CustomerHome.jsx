@@ -27,6 +27,7 @@ class CustomerHome extends Component {
     }
     componentWillReceiveProps () {
         setTimeout(() => {
+            console.log("New restraurants are ", this.props.restraurants);
             this.setState({
                 restraurants : this.props.restraurants
             })
@@ -51,6 +52,12 @@ class CustomerHome extends Component {
                 <h1 style = {{color : "#d32323", fontWeight : "bolder"}}>No such restraurants found</h1>
             </div>
         }
+        if(this.props.restraurants)
+        {
+            temp = this.props.restraurants.map(i => {
+                return <Restraurant key = {i._id} restraurant = {i} />
+            })
+        }
         return (
             <div>
                 {redirectVar}
@@ -64,9 +71,7 @@ class CustomerHome extends Component {
                         </Col>
                         <Col md = {6} style={{marginLeft:"7%", }}>
                             {temp}
-                            {this.state.restraurants.map(i => {
-                                return <Restraurant key = {i.restraurant_id} restraurant = {i} />
-                            })}
+                            
                         </Col>
                         <Col md = {3} style = {{marginLeft : "27%"}}>
                             {/* <GoogleMap  restraurants = {this.state.restraurants}/> */}
@@ -88,7 +93,6 @@ function mapDispatchToProps(dispatch) {
   }
   
   function mapStateToProps(store) {
-      console.log("The store is", store)
     return {
       
     //   user_id : store.user_id

@@ -27,8 +27,18 @@ var get_customer_orders = require('./services/Customers/CustomerOrders/get_custo
 var filter_customer_orders = require('./services/Customers/CustomerOrders/filter_customer_orders');
 var get_restraurant_orders = require('./services/Restraurants/RestraurantOrders/get_restraurant_orders');
 var update_order_status = require('./services/Restraurants/RestraurantOrders/update_order_status');
+var filter_restraurant_orders = require('./services/Restraurants/RestraurantOrders/filter_restraurant_orders');
 var add_event = require('./services/Restraurants/RestraurantEvents/add_event')
 var get_restraurant_events = require('./services/Restraurants/RestraurantEvents/get_restraurant_events');
+var get_all_events = require('./services/Customers/CustomerEvents/get_all_events');
+var register_for_an_event = require('./services/Customers/CustomerEvents/register_for_an_event');
+var get_user_events = require('./services/Customers/CustomerEvents/get_user_events');
+var search_events = require('./services/Customers/CustomerEvents/search_events');
+var insert_restraurant_review = require('./services/Customers/CustomerReviews/insert_restraurant_review');
+var get_customer_reviews = require('./services/Customers/CustomerReviews/get_customer_reviews');
+var get_restraurant_reviews = require('./services/Restraurants/RestraurantReviews/get_restraurant_reviews');
+var search = require('./services/Customers/Filter/search');
+var final_filter = require('./services/Customers/Filter/final_filter');
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -87,5 +97,15 @@ handleTopicRequest("get_customer_orders", get_customer_orders);
 handleTopicRequest("filter_customer_orders", filter_customer_orders);
 handleTopicRequest("get_restraurant_orders", get_restraurant_orders);
 handleTopicRequest("update_order_status", update_order_status);
+handleTopicRequest("filter_restraurant_orders", filter_restraurant_orders);
 handleTopicRequest("add_event", add_event);
 handleTopicRequest("get_restraurant_events", get_restraurant_events);
+handleTopicRequest("get_all_events", get_all_events);
+handleTopicRequest("register_for_an_event", register_for_an_event);
+handleTopicRequest("get_user_events", get_user_events);
+handleTopicRequest("search_events", search_events);
+handleTopicRequest("insert_restraurant_review", insert_restraurant_review);
+handleTopicRequest("get_customer_reviews", get_customer_reviews);
+handleTopicRequest("get_restraurant_reviews", get_restraurant_reviews);
+handleTopicRequest("search", search);
+handleTopicRequest("final_filter", final_filter);

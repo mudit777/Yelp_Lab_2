@@ -183,35 +183,45 @@ export function filter_restraurant_orders(payload)
         axios.post(`${BACKEND}/filterRestraurantOrders`, payload).then(response => {
             if(response.status === 200)
             {
-                var result = []
-                var count = 0
-                for(let i in response.data)
+                if(response.data.length > 0)
                 {
-                    let order = response.data[i]
-                    var user = {
-                        UserId : order.user_id
-                    }
-                    let temp = async () => {
-                        const userResponse = await axios.post(`${BACKEND}/getUserDetails`, user)
-                        return userResponse;
-                    }
-                    temp().then(userResponse => {
-                        if(userResponse.status === 200)
-                        {
-                            order = {...order, user : userResponse.data}
-                            result.push(order)
-                            count++;
-                            if(count === response.data.length)
-                            {
-                                data = {
-                                    restraurant_orders : result,
-                                    message : "Restraurant orders fetched"
-                                }
-                                console.log("restraurant orders are", data)
-                                dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
-                            }
+                    var result = []
+                    var count = 0
+                    for(let i in response.data)
+                    {
+                        let order = response.data[i]
+                        var user = {
+                            UserId : order.user_id
                         }
-                    })
+                        let temp = async () => {
+                            const userResponse = await axios.post(`${BACKEND}/getUserDetails`, user)
+                            return userResponse;
+                        }
+                        temp().then(userResponse => {
+                            if(userResponse.status === 200)
+                            {
+                                order = {...order, user : userResponse.data}
+                                result.push(order)
+                                count++;
+                                if(count === response.data.length)
+                                {
+                                    data = {
+                                        restraurant_orders : result,
+                                        message : "Restraurant orders fetched"
+                                    }
+                                    console.log("restraurant orders are", data)
+                                    dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
+                                }
+                            }
+                        })
+                    }
+                }
+                else{
+                    data = {
+                        restraurant_orders : response.data,
+                        message : "Restraurant orders fetched"
+                    }
+                    dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
                 }
                 
             }
@@ -527,11 +537,17 @@ export function insert_review(payload)
         axios.post(`${BACKEND}/insertRestraurantReview`, payload).then(response => {
             if(response.status === 200)
             {
+                notification["success"]({
+                    message: 'Review added',
+                    description:
+                      'Review Successfully Added',
+                  });
                 data = {
                     message : "Review Inserted",
                     restraurant_review_stars : response.data.reviews_rating,
                     reviews_count : response.data.reviews_count
                 }
+                console.log("Review has been inserted with data", data);
                 dispatch({type : INSERT_REVIEW, data})
             }
         }).catch(err => {

@@ -144,7 +144,7 @@ class AddDish extends Component {
             if(this.state.dishId === 0)
             {
                 console.log("dish is ", dish)
-                // this.props.add_dish(dish);
+                this.props.add_dish(dish);
             }
             else{
                 dish['dish_id'] = this.state.dishId;
