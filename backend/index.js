@@ -14,7 +14,6 @@ const mongoConnection = require('./config')
 // let connection = require("./database")
 app.set('view engine', 'ejs');
 var kafka = require('./kafka/client')
-var Customers = require('./Models/userModel')
 // var mongoose = require('mongoose')
 module.exports = app
 //use cors to allow cross origin resource sharing
@@ -99,47 +98,64 @@ var customerEventsRouter = require('./src/Customer/Events/Events');
 var restraurantReviewsRouter = require('./src/Restraurant/Reviews/Reviews');
 var restraurantEventsRouter = require('./src/Restraurant/Events/Events');
 var customerFilterRouter = require('./src/Customer/Filter/Filter')
+var restraurantChatRouter = require('./src/Restraurant/Chat/Chat');
+var customerChatRouter = require('./src/Customer/Chats/Chats')
+
+var passport = require('passport');
+var requireAuth = passport.authenticate('jwt', {session: false});
 
 app.post('/signIn', customerLoginRouter.customerSignIn);
 app.post('/registerUser', registerCustomerRouter.RegisterCustomer);
-app.post("/getUserDetails", customerDetailsRouter.getCustomerDetails);
-app.post("/updateUserInfo", customerDetailsRouter.updateCustomerDetails);
-app.post("/registerRestraurant" , restraurantAuthenticationRouter.registerRestraurant);
+app.post("/getUserDetails", requireAuth,customerDetailsRouter.getCustomerDetails);
+app.post("/updateUserInfo", requireAuth, customerDetailsRouter.updateCustomerDetails);
+app.post("/registerRestraurant", restraurantAuthenticationRouter.registerRestraurant);
 app.post("/restrauSignIn", restraurantAuthenticationRouter.restraurantSignIn);
-app.post("/getRestrauDetails", restraurantDetailsRouter.getRestraurantDetails);
-app.post("/updateRestrauDetails", restraurantDetailsRouter.updateRestraurantDetails);
-app.post("/addDish", dishRouter.addDish);
-app.post("/getDishDetails" , dishRouter.getDishDetails)
-app.post("/updateDish", dishRouter.updateDish);
-app.post("/getDishes" , dishRouter.getDishes);
-app.get("/getAllRestraurants", othersRouter.getAllRestraurants);
-app.post("/addItemToCart", cartRouter.addItemToCart);
-app.post("/getUserCartDetails", cartRouter.getUserCartDetails);
-app.post('/deleteCartItem', cartRouter.deleteCartItem);
-app.post("/setCartItemQuantity", cartRouter.setCartItemQuantity);
-app.post("/getCartItemDetails", cartRouter.getCartItemDetails);
-app.post("/placeOrder", customerOrderRouter.placeOrder);
-app.post("/getUserOrders", customerOrderRouter.getCustomerOrders);
-app.post("/filterCustomerOrders", customerOrderRouter.filterCustomerOrders);
-app.post("/getRestraurantOrders", restraurantOrderRouter.getRestraurantOrders);
-app.post("/updateOrderStatus", restraurantOrderRouter.updateOrderStatus);
-app.post("/filterRestraurantOrders", restraurantOrderRouter.filterRestraurantOrders);
-app.post("/insertRestraurantReview", customerReviewsRouter.insertRestraurantReview);
-app.post("/getUserReviews", customerReviewsRouter.getCustomerReviews);
-app.post("/getRestraurantReviews", restraurantReviewsRouter.getRestraurantReviews);
-app.post("/addEvent", restraurantEventsRouter.addEvent);
-app.post("/getRestraurantEvents", restraurantEventsRouter.getRestraurantEvents);
-app.post('/getUsersOfAnEvent', restraurantEventsRouter.getUsersOfAnEvent);
-app.post("/getEvents", customerEventsRouter.getAllEvents);
-app.post("/registerUserForEvent", customerEventsRouter.registerForAnEvent);
-app.post("/getUserEvents" , customerEventsRouter.getUserEvents);
-app.post("/searchEvents", customerEventsRouter.searchEvents);
-app.post("/search", customerFilterRouter.search);
-app.post("/finalFilter", customerFilterRouter.finalFilter);
+app.post("/getRestrauDetails", requireAuth, restraurantDetailsRouter.getRestraurantDetails);
+app.post("/updateRestrauDetails", requireAuth, restraurantDetailsRouter.updateRestraurantDetails);
+app.post("/addDish", requireAuth, dishRouter.addDish);
+app.post("/getDishDetails" , requireAuth, dishRouter.getDishDetails)
+app.post("/updateDish", requireAuth, dishRouter.updateDish);
+app.post("/getDishes" , requireAuth, dishRouter.getDishes);
+app.get("/getAllRestraurants", requireAuth, othersRouter.getAllRestraurants);
+app.post("/addItemToCart", requireAuth,cartRouter.addItemToCart);
+app.post("/getUserCartDetails", requireAuth, cartRouter.getUserCartDetails);
+app.post('/deleteCartItem', requireAuth, cartRouter.deleteCartItem);
+app.post("/setCartItemQuantity", requireAuth, cartRouter.setCartItemQuantity);
+app.post("/getCartItemDetails", requireAuth, cartRouter.getCartItemDetails);
+app.post("/placeOrder", requireAuth, customerOrderRouter.placeOrder);
+app.post("/getUserOrders", requireAuth, customerOrderRouter.getCustomerOrders);
+app.post("/filterCustomerOrders", requireAuth, customerOrderRouter.filterCustomerOrders);
+app.post("/getRestraurantOrders", requireAuth, restraurantOrderRouter.getRestraurantOrders);
+app.post("/updateOrderStatus", requireAuth, restraurantOrderRouter.updateOrderStatus);
+app.post("/filterRestraurantOrders", requireAuth, restraurantOrderRouter.filterRestraurantOrders);
+app.post("/insertRestraurantReview", requireAuth, customerReviewsRouter.insertRestraurantReview);
+app.post("/getUserReviews", requireAuth, customerReviewsRouter.getCustomerReviews);
+app.post("/getRestraurantReviews", requireAuth, restraurantReviewsRouter.getRestraurantReviews);
+app.post("/addEvent", requireAuth, restraurantEventsRouter.addEvent);
+app.post("/getRestraurantEvents", requireAuth, restraurantEventsRouter.getRestraurantEvents);
+app.post('/getUsersOfAnEvent', requireAuth, restraurantEventsRouter.getUsersOfAnEvent);
+app.post("/getEvents", requireAuth, customerEventsRouter.getAllEvents);
+app.post("/registerUserForEvent", requireAuth, customerEventsRouter.registerForAnEvent);
+app.post("/getUserEvents" , requireAuth, customerEventsRouter.getUserEvents);
+app.post("/searchEvents", requireAuth, customerEventsRouter.searchEvents);
+app.post("/search", requireAuth, customerFilterRouter.search);
+app.post("/finalFilter", requireAuth, customerFilterRouter.finalFilter);
 app.post("/uploadPhoto", upload.single('Image'),  customerDetailsRouter.uploadProfileImage);
 app.post("/uploadRestrauProfilePic", upload.single('Image'), restraurantDetailsRouter.updateRestrauProfilePic);
 app.post("/uploadRestraurantImages", dish_upload.single('Image'), restraurantDetailsRouter.uploadRestraurantImages);
-app.post("/getRestraurantImages", restraurantDetailsRouter.getRestraurantImages);
+app.post("/getRestraurantImages", requireAuth, restraurantDetailsRouter.getRestraurantImages);
+app.post("/addRestraurantChat", requireAuth, restraurantChatRouter.addChat);
+app.post("/getRestraurantChats", requireAuth, restraurantChatRouter.getRestraurantChats);
+app.post("/getChat", requireAuth, restraurantChatRouter.getChat)
+app.post("/sendMessage", requireAuth, restraurantChatRouter.sendMessage);
+app.post("/getCustomerChats", customerChatRouter.getCustomerChats);
+
+
+
+
+
+
+var Customers = require('./Models/userModel');
 app.get("/getProfileImage/:userid", (req, res) => {
     Customers.findOne({_id : req.params.userid}, (err, result) => {
         if(err)
@@ -218,27 +234,6 @@ app.post("/uploadDishImage", dish_upload.single('Image'), function(req, res){
     })
     res.end(JSON.stringify(req.file.path))
 })
-// app.post("/getRestraurantImages", (req, res) =>{
-//     var query = "SELECT * FROM images_table WHERE restraurant_id = '"+ req.body.restraurant_id +"'";
-//     connection.query(query, (err, result) => {
-//         if(err)
-//         {
-//             res.writeHead(500, {
-//                 "Content-Type" : "text/plain"
-//             })
-//             res.end("Server Side Error")
-//         }
-//         // if(result)
-//         else
-//         {
-//             console.log(result)
-//             res.writeHead(200, {
-//                 'Content-Type' : 'application/json'
-//             })
-//             res.end(JSON.stringify(result))
-//         }
-//     })
-// })
 
 
 

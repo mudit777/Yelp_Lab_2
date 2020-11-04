@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import 'antd/dist/antd.css';
-import {Row, Col, Input, Button, Table, Space, DatePicker, TimePicker, notification} from 'antd';
+import {Row, Col, Input, Button, Table, Space, DatePicker, TimePicker, notification, Pagination} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserFriends, faStar, faUser, faCalendarCheck, faTag, faJedi, faCalendarDay } from '@fortawesome/free-solid-svg-icons'
 import Axios from 'axios';
@@ -50,7 +50,12 @@ class LowerRestrauProfile extends Component {
         this.state = {
             dishes : [],
             visible : false,
-            loading : false
+            loading : false,
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
     }
     componentDidMount() {
@@ -62,10 +67,15 @@ class LowerRestrauProfile extends Component {
     componentWillReceiveProps(){
         
         setTimeout(() => {
-            console.log("Inside props with data" , this.props.restraurant_dishes)
-            this.setState({
-                dishes : this.props.restraurant_dishes
-            })
+            if(this.props.restraurant_dishes)
+            {
+                console.log("Inside props with data" , this.props.restraurant_dishes)
+                this.setState({
+                    dishes : this.props.restraurant_dishes,
+                    pageCount: Math.ceil(this.props.restraurant_dishes.length/this.state.perPage),
+                })
+                this.setElementsForCurrentPage();
+            }
             if(this.props.message === "Event Successfully Added")
             {
                 this.setState({
@@ -123,6 +133,28 @@ class LowerRestrauProfile extends Component {
         }
         
     }
+    setElementsForCurrentPage = () => {
+        let elements = this.props.restraurant_dishes.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        console.log("Inside show catolgocal data function", this.state.elements);
+        return this.state.elements.map(i => {
+            // console.log("Calling child with i ------------------", i)
+            return (
+                <Dish dish = {i} source = "Restrau" />
+              )
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }    
     render() {
         var temp = null;
         if(this.state.dishes.length === 0)
@@ -130,6 +162,22 @@ class LowerRestrauProfile extends Component {
             temp = <div>
                 <h1 style = {{color : "#d32323", fontWeight : "bolder"}}>No Dishes found</h1>
             </div>
+        }
+        let paginationElement;
+        if(this.props.restraurant_dishes)
+        {
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.restraurant_dishes.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         console.log(this.state.dishes)
         return (
@@ -221,12 +269,16 @@ class LowerRestrauProfile extends Component {
                                 </ul>
                             </Col>
                             <Col md = {5}>
-                                {this.state.dishes.map(i => {
+                                {/* {this.state.dishes.map(i => {
                                     return  <Dish dish = {i} source = "Restrau" />
-                                })}
+                                })} */}
+                                <div>{this.showCatalogicData()}</div>
                             </Col>
                             
                         </Row>
+                    </div>
+                    <div style = {{marginLeft : "75%", marginTop : "3%"}}>
+                        {paginationElement}
                     </div>
                 </div>
                 <Modal title = "Add an event"

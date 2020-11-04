@@ -57,6 +57,11 @@ class LandingPage extends Component {
     getYelpBusiness = () => {
         window.location.href = "/restrauSignUp"
     }
+    componentWillReceiveProps(){
+        setTimeout(() => {
+            console.log("In props profile image is-----------------", this.props)
+        })
+    }
     render() {
         console.log(sessionStorage)
         var temp1 = null
@@ -64,8 +69,17 @@ class LandingPage extends Component {
         var temp3 = null
         if(sessionStorage.getItem('isLoggedIn') === 'true')
         {
-            console.log(this.props.user)
-            temp1 = <Link to = '/customerProfile'><Avatar size = {50}  style = {{marginLeft : "58%"}} src = {`${BACKEND}/getProfileImage/` +  window.sessionStorage.getItem("UserId")} /></Link>
+            console.log("user is _____________________", this.props.user)
+            var filename = ""
+            if(this.props.user)
+            {
+                filename = this.props.user.profile_photo.split('public').pop();
+                temp1 = <Link to = '/customerProfile'><Avatar size = {50}  style = {{marginLeft : "58%"}} src = {`${BACKEND}` +  filename} /></Link>
+            }
+            else{
+                temp1 = <Link to = '/customerProfile'><Avatar size = {50}  style = {{marginLeft : "58%"}} src = {`${BACKEND}/getProfileImage/` +  window.sessionStorage.getItem("UserId")} /></Link>
+            }
+            
         }
         else
         {

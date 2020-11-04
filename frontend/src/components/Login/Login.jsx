@@ -119,10 +119,11 @@ function mapDispatchToProps(dispatch) {
   }
   
 function mapStateToProps(store) {
+    console.log("Store is ==================", store)
 return {
     msg: store.message,
     user_id : store.user_id,
-    authFlag : store.authFlag
+    authFlag : store.authFlag,
 };
 }
 

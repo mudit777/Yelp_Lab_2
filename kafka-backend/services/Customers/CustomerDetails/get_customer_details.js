@@ -4,7 +4,7 @@ var Customers = require('../../../Models/userModel')
 
 function handle_request(message, callback)
 {
-    console.log("Message is ", ObjectId(message.UserId))
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Message is ", ObjectId(message.UserId))
     Customers.findOne({_id : ObjectId(message.UserId)}, (err, customer) => {
         console.log("--------------------------Customer is ____________________________", customer)
         if(err)

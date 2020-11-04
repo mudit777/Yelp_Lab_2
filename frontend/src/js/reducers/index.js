@@ -1,5 +1,6 @@
 import { message } from 'antd';
-import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, RESTRAURANT_SIGN_IN, REGISTER_RESTRAURANT, GET_RESTRAURANT_DETAILS, GET_RESTRAURANT_DISHES, GET_CURRENT_DISH_DETAILS, GET_RESTRAURANT_ORDERS, FILTER_RESTRAURANT_ORDERS, GET_RESTRAURANT_REVIEWS, GET_RESTRAURANT_EVENTS, ADD_DISH, UPDATE_DISH, UPLOAD_DISH_PICTURE, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_USERS_OF_AN_EVENT, UPDATE_ORDER_STATUS, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO, UPDATE_RESTRAURANT_PHOTO, UPDATE_RESTRAURANT_IMAGES, GET_RESTRAURANT_CUSTOMER_DETAILS, ADD_EVENT, INSERT_REVIEW} from '../constants/action-types'
+import { useForm } from 'antd/lib/form/Form';
+import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, RESTRAURANT_SIGN_IN, REGISTER_RESTRAURANT, GET_RESTRAURANT_DETAILS, GET_RESTRAURANT_DISHES, GET_CURRENT_DISH_DETAILS, GET_RESTRAURANT_ORDERS, FILTER_RESTRAURANT_ORDERS, GET_RESTRAURANT_REVIEWS, GET_RESTRAURANT_EVENTS, ADD_DISH, UPDATE_DISH, UPLOAD_DISH_PICTURE, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_USERS_OF_AN_EVENT, UPDATE_ORDER_STATUS, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO, UPDATE_RESTRAURANT_PHOTO, UPDATE_RESTRAURANT_IMAGES, GET_RESTRAURANT_CUSTOMER_DETAILS, ADD_EVENT, INSERT_REVIEW, ADD_CHAT, GET_RESTRAURANT_CHATS, GET_CHAT, SEND_MESSAGE, GET_CUSTOMER_CHATS} from '../constants/action-types'
 
 const initialState = {
     
@@ -12,7 +13,7 @@ function rootReducer(state = initialState, action)
               user_id: action.data.user_id,
               message : action.data.message,
               authFlag : action.data.authFlag,
-              user : action.data.user
+              user : action.data.user,
             })
       }
     else if(action.type === CUSTOMER_PROFILE)
@@ -351,6 +352,40 @@ function rootReducer(state = initialState, action)
         message : action.data.message,
         restraurant_review_stars : action.data.restraurant_review_stars,
         reviews_count : action.data.reviews_count
+      })
+    }
+    else if(action.type === ADD_CHAT)
+    {
+      return Object.assign({}, state, {
+        message : action.data.message
+      })
+    }
+    else if(action.type === GET_RESTRAURANT_CHATS)
+    {
+      return Object.assign({}, state, {
+        message : action.data.message,
+        restraurant_chats : action.data.restraurant_chats
+      })
+    }
+    else if(action.type === GET_CHAT)
+    {
+      return Object.assign({}, state, {
+        message : action.data.message,
+        restraurant_customer_chat : action.data.restraurant_customer_chat
+      })
+    }
+    else if(action.type === SEND_MESSAGE)
+    {
+      return Object.assign({}, state, {
+        message : action.data.message,
+        restraurant_customer_chat : action.data.restraurant_customer_chat
+      })
+    }
+    else if(action.type === GET_CUSTOMER_CHATS)
+    {
+      return Object.assign({}, state, {
+        message : action.data.message,
+        customer_chats : action.data.customer_chats
       })
     }
     return state;  

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import UpperCustomerProfile from '../UpperCustomerProfile/UpperCustomerProfile'
 import MiddleRestraurantProfile from '../MiddleRestraurantProfile/MiddleRestraurantProfile'
-import { Col, notification, Row } from 'antd'
+import { Col, notification, Pagination, Row } from 'antd'
 import Axios from 'axios';
 import { BACKEND } from '../../Config';
 import RestraurantReviewCard from '../RestraurantReviewCard/RestraurantReviewCard';
@@ -15,7 +15,12 @@ class RestraurantReviews extends Component {
     constructor(props){
         super(props);
         this.state = {
-            reviews : []
+            reviews : [],
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
         if(window.sessionStorage.getItem('RestrauLoggedIn') === 'true')
         {
@@ -29,8 +34,10 @@ class RestraurantReviews extends Component {
     componentWillReceiveProps(){
         setTimeout(() => {
            this.setState({
-               reviews : this.props.restraurant_reviews
+               reviews : this.props.restraurant_reviews,
+               pageCount: Math.ceil(this.props.restraurant_reviews.length/this.state.perPage),
            }) 
+           this.setElementsForCurrentPage();
         }, );
     }
     // getRestraurantReviews = () => {
@@ -55,6 +62,28 @@ class RestraurantReviews extends Component {
     //         }
     //     })
     // }
+    setElementsForCurrentPage = () => {
+        let elements = this.props.restraurant_reviews.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        console.log("Inside show catolgocal data function", this.state.elements);
+        return this.state.elements.map(i => {
+            // console.log("Calling child with i ------------------", i)
+            return (
+                <RestraurantReviewCard review = {i} key = {i.review_id}  />
+              )
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }    
     render() {
         let redirectVar = null
         if(!window.sessionStorage.getItem('RestrauLoggedIn'))
@@ -64,17 +93,33 @@ class RestraurantReviews extends Component {
         var temp = null;
         if(this.props.restraurant_reviews)
         {
-            temp = this.props.restraurant_reviews.map(i => {
-                return(
-                    <RestraurantReviewCard review = {i} key = {i.review_id}  />
-                )
-            })
+            // temp = this.props.restraurant_reviews.map(i => {
+            //     return(
+            //         <RestraurantReviewCard review = {i} key = {i.review_id}  />
+            //     )
+            // })
         }
         if(this.state.reviews.length === 0)
         {
             temp = <div>
                 <h1 style = {{color : "#d32323", fontWeight : "bolder"}}>No Reviews found</h1>
             </div>
+        }
+        let paginationElement;
+        if(this.props.restraurant_reviews)
+        {
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.restraurant_reviews.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         return (
             <div>
@@ -157,9 +202,12 @@ class RestraurantReviews extends Component {
                         </Col>                        
                         <Col md = {8}>
                             {temp}
-                            
+                            <div>{this.showCatalogicData()}</div>
                         </Col>
                     </Row>
+                </div>
+                <div style = {{marginLeft : "75%", marginTop : "3%"}}>
+                    {paginationElement}
                 </div>
             </div>
         )

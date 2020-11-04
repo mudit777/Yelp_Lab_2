@@ -1,4 +1,4 @@
-import { Col, Rate, Row , Button, Card, Input, notification} from 'antd'
+import { Col, Rate, Row , Button, Card, Input, notification, Pagination} from 'antd'
 import Axios from 'axios';
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom';
@@ -30,7 +30,12 @@ class RestraurantView extends Component {
             image2 : "https://s3-media0.fl.yelpcdn.com/bphoto/Wfx490HEQA6EwwH8-AxLAA/l.jpg",
             image3 : "https://s3-media0.fl.yelpcdn.com/bphoto/5Z70LwSlJPwnP0-kFk99ow/o.jpg",
             image4 : "https://s3-media0.fl.yelpcdn.com/bphoto/9w12kT6Bm5BELhHtCvVsZA/o.jpg",
-            images : []
+            images : [],
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
     }
     componentDidMount(){
@@ -63,8 +68,10 @@ class RestraurantView extends Component {
                     reviewsCount : this.props.customer_restraurant.reviews_count,
                     email : this.props.customer_restraurant.email,
                     phoneNumber : this.props.customer_restraurant.phone_number,
-                    dishes : this.props.customer_restraurant_dishes
+                    dishes : this.props.customer_restraurant_dishes,
+                    pageCount: Math.ceil(this.props.customer_restraurant_dishes.length/this.state.perPage),
                 })
+                this.setElementsForCurrentPage();
             }
             if(this.props.message === "Review Inserted")
             {
@@ -152,6 +159,26 @@ class RestraurantView extends Component {
             description : e.target.value
         })
     }
+    setElementsForCurrentPage = () => {
+        let elements = this.props.customer_restraurant_dishes.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        console.log("Inside show catolgocal data function", this.state.elements);
+        return this.state.elements.map(i => {
+            // console.log("Calling child with i ------------------", i)
+            return <DishDetails source = "Customer" key = {i._id} dish = {i} style={{width:"40%"}}/>
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }
     render() {
         const reviews = parseInt(this.state.reviews)
         let redirectVar = null;
@@ -160,11 +187,27 @@ class RestraurantView extends Component {
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
         var temp = null;
+        // if(this.props.customer_restraurant_dishes)
+        // {
+        //     temp = this.props.customer_restraurant_dishes.map(i => {
+        //         return <DishDetails source = "Customer" key = {i._id} dish = {i} style={{width:"40%"}}/>
+        //     })
+        // }
+        let paginationElement;
         if(this.props.customer_restraurant_dishes)
         {
-            temp = this.props.customer_restraurant_dishes.map(i => {
-                return <DishDetails source = "Customer" key = {i._id} dish = {i} style={{width:"40%"}}/>
-            })
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.customer_restraurant_dishes.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         return (
             <div>
@@ -211,7 +254,9 @@ class RestraurantView extends Component {
                          <Col md = {8}>
                             <div className="dishes">
                                 {temp}
+                                <div>{this.showCatalogicData()}</div>
                             </div>
+                           
                         </Col> 
                         <Col md = {4} style ={{marginLeft:"25%", marginTop:"3.3%"}}>
                             <ul style={{listStyleType : "none"}}>
@@ -271,6 +316,9 @@ class RestraurantView extends Component {
                             </ul>
                         </Col> 
                     </Row>
+                </div>
+                <div style = {{marginLeft : "45%", marginTop : "3%"}}>
+                    {paginationElement}
                 </div>
                 <Modal title = "Write a Review"
                     visible={this.state.visible}

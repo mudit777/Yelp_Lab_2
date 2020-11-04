@@ -82,7 +82,7 @@ class UpperRestraurantProfile extends Component {
             temp = <Avatar src = "https://cdn0.iconfinder.com/data/icons/social-media-network-4/48/male_avatar-512.png" />
         }
         return (
-            <div style = {{borderBottom : "1px solid #f5f5f5", paddingBottom: '3%'}}>
+            <div style = {{borderBottom : "1px solid #f5f5f5", paddingBottom: '1%'}}>
                 {/* {redirectVar} */}
                 <Row>
                         <Col md = {1}>

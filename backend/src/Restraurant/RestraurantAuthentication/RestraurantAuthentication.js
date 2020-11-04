@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 let connection = require("../../../database")
 var kafka = require("../../../kafka/client")
+const jwt = require('jsonwebtoken');
+const { secret } = require('../../../Utils/config');
 
 exports.registerRestraurant = (req, res) => {
     kafka.make_request('register_restraurant', req.body, (err, result) => {
@@ -49,10 +51,15 @@ exports.restraurantSignIn = (req, res) => {
             res.end("Invalid user");
         }
         else{
+            const payload = { _id: result._id, source : "restraurant"};
+            const token = jwt.sign(payload, secret,  {
+                expiresIn: 1008000
+            });
+            result.token = "JWT " + token;
             res.writeHead(200,{
                 'Content-Type' : 'applicaton/json'
             })
-            res.end(JSON.stringify(result._id));
+            res.end(JSON.stringify(result));
         }
     })
 }

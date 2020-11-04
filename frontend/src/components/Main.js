@@ -24,6 +24,8 @@ import CustomerEvents from './CustomerEvents/CustomerEvents';
 import CustomerRegisteredEvents from './CustomerRegisteredEvents/CustomerRegisteredEvents';
 import UploadRestraurantPictures from './UploadRestraurantPictures/UploadRestraurantPictures';
 import ViewCustomerProfile from './ViewCustomerProfile/ViewCustomerProfile';
+import RestraurantMessages from './RestraurantMessages/RestraurantMessages';
+import CustomerChats from './CustomerChats/CustomerChats';
 class Main extends Component {
     render(){
         return(
@@ -52,6 +54,8 @@ class Main extends Component {
                 <Route path = '/customerRegisteredEvents' component = {CustomerRegisteredEvents} />
                 <Route path = '/restraurantPictures' component = {UploadRestraurantPictures} />
                 <Route path = '/viewCustomerProfile' component = {ViewCustomerProfile} />
+                <Route path = "/restraurantMessages" component = {RestraurantMessages} />
+                <Route path = "/customerMessages"  component = {CustomerChats} />
             </div>
         )
     }

@@ -41,6 +41,11 @@ var search = require('./services/Customers/Filter/search');
 var final_filter = require('./services/Customers/Filter/final_filter');
 var upload_restraurant_images = require('./services/Restraurants/RestraurantDetails/upload_restraurant_images');
 var get_restraurant_images = require('./services/Restraurants/RestraurantDetails/get_restraurant_images');
+var add_chat = require('./services/Restraurants/Chat/add_chat');
+var get_restraurant_chats = require('./services/Restraurants/Chat/get_restraurant_chats');
+var get_chat = require('./services/Restraurants/Chat/get_chat');
+var send_message = require('./services/Restraurants/Chat/send_message');
+var get_customer_chats = require('./services/Customers/CustomerChats/get_customer_chats');
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -113,3 +118,8 @@ handleTopicRequest("search", search);
 handleTopicRequest("final_filter", final_filter);
 handleTopicRequest("upload_restraurant_images", upload_restraurant_images);
 handleTopicRequest("get_restraurant_images", get_restraurant_images);
+handleTopicRequest("add_chat", add_chat);
+handleTopicRequest("get_restraurant_chats", get_restraurant_chats);
+handleTopicRequest("get_chat", get_chat);
+handleTopicRequest("send_message", send_message);
+handleTopicRequest("get_customer_chats", get_customer_chats);

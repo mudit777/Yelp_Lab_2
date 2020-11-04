@@ -1,35 +1,47 @@
-"use strict";
-var JwtStrategy = require("passport-jwt").Strategy;
-var ExtractJwt = require("passport-jwt").ExtractJwt;
-const passport = require("passport");
-var { secret } = require("./config");
-const Users = require('../Models/UserModel');
-
+'use strict';
+var passport = require('../node_modules/passport');
+var JwtStrategy = require('../node_modules/passport-jwt').Strategy;
+var ExtractJwt = require('../node_modules/passport-jwt').ExtractJwt;
+var Customers = require('../Models/userModel');
+var Restraurants = require('../Models/restraurantModel');
+var config = require('./config');
 // Setup work and export for the JWT passport strategy
-function auth() {
-    var opts = {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
-        secretOrKey: secret
-    };
-    passport.use(
-        new JwtStrategy(opts, (jwt_payload, callback) => {
-            const user_id = jwt_payload._id;
-            Users.findById(user_id, (err, results) => {
-                if (err) {
-                    return callback(err, false);
-                }
-                if (results) {
-                    callback(null, results);
-                }
-                else {
-                    callback(null, false);
-                }
-            });
-        })
-    )
-}
+var opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
+    secretOrKey: config.secret
+};
+passport.use(new JwtStrategy(opts, function (jwt_payload, callback) {
+    console.log("jwtPayload is --------------------------- ", jwt_payload);
+    if(jwt_payload.source === "customer")
+    {
+        Customers.findOne({ _id: jwt_payload._id }, function (err, user) {
+            if (err) {
+                return callback(err, false);
+            }
+            if (user) {
+                console.log("user in passport is ---------------", user);
+                delete user.password;
+                return callback(null, true);
+            } else {
+                return callback(null, false);
+            }
+        });
+    }
+    else{
+        Restraurants.findOne({ _id: jwt_payload._id }, function (err, restraurant) {
+            if (err) {
+                return callback(err, false);
+            }
+            if (restraurant) {
+                console.log("user in passport is ---------------", restraurant);
+                delete restraurant.password;
+                return callback(null, true);
+            } else {
+                return callback(null, false);
+            }
+        });
+    }
+    
+}));
 
-exports.auth = auth;
-exports.checkAuth = passport.authenticate("jwt", { session: false });
-
-
+module.exports = passport;

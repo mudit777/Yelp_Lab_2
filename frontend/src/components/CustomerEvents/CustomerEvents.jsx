@@ -1,4 +1,4 @@
-import { Button, Card, Col, Input, notification, Row } from 'antd';
+import { Button, Card, Col, Input, notification, Pagination, Row } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom';
@@ -12,7 +12,12 @@ class CustomerEvents extends Component {
     constructor(props){
         super(props);
         this.state = {
-            events : []
+            events : [],
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
         if(window.sessionStorage.getItem('isLoggedIn') === 'true')
         {
@@ -22,10 +27,32 @@ class CustomerEvents extends Component {
     componentWillReceiveProps(){
         setTimeout(() => {
             this.setState({
-                events : this.props.customer_events
+                events : this.props.customer_events,
+                pageCount: Math.ceil(this.props.customer_events.length/this.state.perPage),
             })
+            this.setElementsForCurrentPage();
         })
     }
+    setElementsForCurrentPage = () => {
+        let elements = this.state.events.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        return this.state.elements.map(i => {
+            return(
+                <CustomerEventRegistrationCard event = {i} key = {i.event_id} />
+            )
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }    
     searchEvent = () => {
         var myJson = {
             search : document.getElementById("eventSearch").value
@@ -46,6 +73,22 @@ class CustomerEvents extends Component {
             temp = <div>
                 <h1 style = {{color : "#d32323", fontWeight : "bolder"}}>No events found</h1>
             </div>
+        }
+        let paginationElement;
+        if(this.props.customer_events)
+        {
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.customer_events.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         return (
             <div>
@@ -70,13 +113,17 @@ class CustomerEvents extends Component {
                         </Col>
                         <Col md = {8} style = {{marginLeft: "4%"}}>
                         {temp}
-                            {this.state.events.map(i => {
+                        <div>{this.showCatalogicData()}</div>
+                            {/* {this.state.events.map(i => {
                                 return(
                                     <CustomerEventRegistrationCard event = {i} key = {i.event_id} />
                                 )
-                            })}
+                            })} */}
                         </Col>
                     </Row>
+                </div>
+                <div style = {{marginLeft : "75%", marginTop : "3%"}}>
+                    {paginationElement}
                 </div>
             </div>
         )

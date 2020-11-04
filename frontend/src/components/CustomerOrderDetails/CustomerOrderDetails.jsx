@@ -10,6 +10,7 @@ import { connect } from "react-redux";
 class CustomerOrderDetails extends Component {
     constructor(props){
         super(props);
+        
         var filename = props.order.restraurant.photo.split('public').pop();
         
         this.state = {
@@ -26,7 +27,6 @@ class CustomerOrderDetails extends Component {
             percentage : 0,
             restraurant : props.order.restraurant
         }
-        
     }
     componentDidMount(){
         var per = 0
@@ -63,11 +63,51 @@ class CustomerOrderDetails extends Component {
             restraurant_name : this.props.order.restraurant.restraurant_name,
             cartDishes : cartItems,
             profileImage : `${BACKEND}` + filename,
+            amount : this.props.order.amount
         })
         
     }
-    
-    
+    componentWillReceiveProps(){
+        setTimeout(() => {
+            var per = 0;
+            console.log("Props in customer order details are------------------------------", this.props.order);
+            switch(this.props.order.status){
+                case 'order recieved' :
+                    per = 25
+                    break;
+                case 'preparing' :
+                    per = 50
+                    break;
+                case 'on the way' :
+                    per = 75
+                    break;
+                case 'ready for pick up' :
+                    per = 75
+                    break;    
+                case 'delivered' :
+                    per = 100
+                    break;
+                case 'picked up' :
+                    per = 100
+                    break
+            }
+            var cartItems = this.props.order.items.split(',');
+            var filename = this.props.order.restraurant.photo.split('public').pop();
+            this.setState({
+                order_id : this.props.order._id,
+                user_id : this.props.order.user_id,
+                restraurant_id : this.props.order.restraurant_id,
+                items : this.props.order.items,
+                status : this.props.order.status,
+                time_placed : this.props.order.time_placed, 
+                percentage : per,
+                restraurant_name : this.props.order.restraurant.restraurant_name,
+                cartDishes : cartItems,
+                profileImage : `${BACKEND}` + filename,
+                amount : this.props.order.amount
+            })
+        }, );
+    }
     render() {
         var temp = null
         return (

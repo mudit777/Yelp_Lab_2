@@ -17,19 +17,19 @@ class CartItemDisplay extends Component {
             var cart = {
                 cart_id : props.item
             }
-            console.log("Hiiiiiix")
+            console.log("Hiiiiiix with cart item ", cart);
             // this.props.get_cart_item_details(cart)
             Axios.post(`${BACKEND}/getCartItemDetails`, cart).then(response => {
                 if(response.status === 200)
                 {
-                    console.log("cart response is ", response)
+                    // console.log("cart response is ", response)
                     var dish = {
                         dish_id : response.data.dish_id
                     }
                     Axios.post(`${BACKEND}/getDishDetails`, dish).then(dishResponse => {
                         if(dishResponse.status === 200)
                         {
-                            console.log("Response of dish ", dish);
+                            // console.log("Response of dish ", dish);
                             this.setState({
                                 dish : dishResponse.data.dish_name,
                                 dishQuantity : response.data.quantity

@@ -1,13 +1,14 @@
 import { faCamera, faStar, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Card, Col, Row } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import Axios from 'axios';
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { BACKEND } from '../../Config';
 import { getCustomerProfile } from '../../js/actions';
-import { get_restraurant_customer_details } from '../../js/actions/restraurant';
+import { add_restraurant_chat, get_restraurant_customer_details } from '../../js/actions/restraurant';
 import UpperRestraurantProfile from '../UpperRestraurantProfile/UpperRestraurantProfile';
 class ViewCustomerProfile extends Component {
     constructor(props)
@@ -17,14 +18,15 @@ class ViewCustomerProfile extends Component {
             user: {},
             image : "",
             fullName : "",
-            location : ""
+            location : "",
+            redirect : false
         }
         console.log(this.props.history.location.state.id)
         var user = {
             UserId : this.props.history.location.state.id
         }
-        this.props.get_restraurant_customer_details(user)
-        this.getUserDetails()
+        console.log("User is ----------", user);
+        this.props.get_restraurant_customer_details(user);
     }
     componentWillReceiveProps(){
         setTimeout(() => {
@@ -36,23 +38,22 @@ class ViewCustomerProfile extends Component {
             })
         }, );
     }
-    getUserDetails = () => {
-        var user = {
-            UserId : this.props.history.location.state.id
+    redirectToMessages = () => {
+        var chat = {
+            customer_id : this.props.restraurant_customer._id,
+            restraurant_id : window.sessionStorage.getItem("RestrauId")
         }
-        // Axios.post(`${BACKEND}/getUserDetails`, user).then(response => {
-        //     if(response.status === 200)
-        //     {
-        //         this.setState({
-        //             user : response.data,
-        //             image : `${BACKEND}/getProfileImage/` +  this.props.history.location.state.id,
-        //             fullName : response.data.first_name + " " + response.data.last_name,
-        //             location : response.data.city + ", " + response.data.state
-        //         })
-        //     }
-        // }).catch()
+        this.props.add_restraurant_chat(chat);
+        this.setState({
+            redirect : true
+        })
     }
     render() {
+        let redirectVar = null;
+        if(this.state.redirect)
+        {
+            redirectVar = <Redirect to = "/restraurantMessages"></Redirect>
+        }
         console.log(this.state)
         var temp = null
         if(this.props.restraurant_customer)
@@ -204,6 +205,7 @@ class ViewCustomerProfile extends Component {
         }
         return (
             <div>
+                {redirectVar}
                 <div>
                     <UpperRestraurantProfile />
                 </div>
@@ -216,41 +218,9 @@ class ViewCustomerProfile extends Component {
                             <div className="location">
                                 <h3>{this.state.location}</h3>
                             </div>
-                            {/* <div className="stats">
-                                <Row>
-                                    <Col xs = {4}>
-                                    <FontAwesomeIcon style={{color:"orange",fontSize:"170%"}} icon = {faUserFriends}  />
-                                    <h4 style={{color:"purple", fontWeight:"bolder", marginTop:"-16%", marginLeft:"22%"}}>{this.state.friends} Friends</h4>
-                                    </Col>
-                                    <Col xs = {4} style={{marginLeft:"-5%"}}>
-                                        <FontAwesomeIcon style={{color:"orange",fontSize:"170%"}} icon = {faStar}  />
-                                        <h4 style={{color:"purple", fontWeight:"bolder", marginTop:"-16%", marginLeft:"22%"}}>{this.state.reviews} Reviews</h4>
-                                    </Col>
-                                    <Col xs = {4} style={{marginLeft:"-3%"}}>
-                                        <FontAwesomeIcon style={{color:"orange",fontSize:"170%"}} icon = {faCamera}  />
-                                        <h4 style={{color:"purple", fontWeight:"bolder", marginTop:"-16%", marginLeft:"22%"}}>{this.state.photos} Photos</h4>
-                                    </Col>
-                                </Row>
-                            </div> */}
-                            {/* <div className = "partition">
-
-                            </div> */}
-                            {/* <div className="actions">
-                                <div className="addPic">
-                                    <FontAwesomeIcon style={{color:"rgb(25 142 255 / 1)",fontSize:"170%"}} icon = {faCamera}  />
-                                    <a style={{ fontWeight:"bolder", marginTop:"-8%", marginLeft:"3%", textDecoration:"underline"}}><Link to={{ 
-                                        pathname: "/uploadPicture", 
-                                        state: {source : "customer"}}}>Upload a picture</Link></a>
-                                </div>
-                                <div className="updateProfile">
-                                    <FontAwesomeIcon style={{color:"rgb(25 142 255 / 1)",fontSize:"170%"}} icon = {faIdCard}  />
-                                    <a  onClick= {this.redirect} style={{ fontWeight:"bolder", marginTop:"-8%", marginLeft:"3%", textDecoration:"underline"}}>Update Profile</a>
-                                </div>
-                                <div className="updateProfile">
-                                    <FontAwesomeIcon style={{color:"rgb(25 142 255 / 1)",fontSize:"170%"}} icon = {faUserFriends}  />
-                                    <a  style={{ fontWeight:"bolder", marginTop:"-8%", marginLeft:"3%", textDecoration:"underline"}}>Add Friends</a>
-                                </div>
-                            </div> */}
+                            <div>
+                                <Button onClick  = {this.redirectToMessages}>Message Customer</Button>
+                            </div>
                         </div>
                     </div>
                     <div className="imageDiv" >
@@ -267,14 +237,16 @@ class ViewCustomerProfile extends Component {
 // export default ViewCustomerProfile;
 function mapDispatchToProps(dispatch) {
     return {
-        get_restraurant_customer_details: user => dispatch(get_restraurant_customer_details(user))
+        get_restraurant_customer_details: user => dispatch(get_restraurant_customer_details(user)),
+        add_restraurant_chat : user => dispatch(add_restraurant_chat(user))
     };
     }
     
     function mapStateToProps(store) {
         console.log("S")
     return {
-        restraurant_customer : store.restraurant_customer
+        restraurant_customer : store.restraurant_customer,
+        message : store.message
     };
     }
     

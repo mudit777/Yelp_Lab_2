@@ -17,7 +17,7 @@ class CustomerCard extends Component {
                     <Card title = {this.state.name} style={{boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)"}} actions = {[
                         <Button style = {{width : "50%", color : "white", backgroundColor: "#d32323", bordered : "false"}}><Link style = {{color : "white"}} to = {{
                             pathname : "/viewCustomerProfile",
-                            state : {id : this.props.user.user_id}
+                            state : {id : this.props.user._id}
                         }}>View Customer Profile</Link></Button>
                     ]}>
                         <ul style = {{listStyleType : 'none'}}>

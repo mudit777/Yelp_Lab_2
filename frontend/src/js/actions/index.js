@@ -1,4 +1,4 @@
-import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO } from '../constants/action-types'
+import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO, GET_CUSTOMER_CHATS } from '../constants/action-types'
 import axios from 'axios';
 import { BACKEND } from '../../Config';
 import {Input, Button, notification} from 'antd';
@@ -19,12 +19,15 @@ export function customerLogin(payload){
                   });
                   window.sessionStorage.setItem("isLoggedIn", true)
                   window.sessionStorage.setItem("UserId",response.data._id);
+                  window.sessionStorage.setItem("jwtToken", response.data.token);
+                  delete response.data.token;
                   data ={
                     message : "Successfully logged in",
                     user_id : response.data._id,
                     user : response.data,
                     authFlag : true
                   }
+                  console.log("Data is ----------------", data);
             }
             else if(response.status === 209)
             {
@@ -78,6 +81,7 @@ export function getCustomerProfile (payload) {
     let data = {};
     return(dispatch)=>{
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getUserDetails`, payload).then(response => {
             if(response.status === 200)
             {
@@ -180,6 +184,7 @@ export function updateCustomerProfile(payload){
     let data = {}
     return(dispatch) => {
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/updateUserInfo`, payload).then(response => {
             if(response.status === 200)
             {
@@ -246,6 +251,7 @@ export function customerLogOut(){
 export function getRestraurant(){
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.get(`${BACKEND}/getAllRestraurants`).then(response => {
             if(response.status === 200)
             {
@@ -271,6 +277,7 @@ export function getRestraurant(){
 export function searchRestraurants(payload){
     let data = {}
     return (dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/search`, payload).then(response => {
             if(response.status === 200)
             {
@@ -287,6 +294,7 @@ export function searchRestraurants(payload){
 export function getDeliveryFilterRestraurants(payload){
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getDeliveryFilterRestraurants`, payload).then(response => {
             if(response.status === 200)
             {
@@ -311,6 +319,7 @@ export function getDeliveryFilterRestraurants(payload){
 export function getNeighorhoodFilterRestraurants(payload){
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getNeighorhoodRestraurants`, payload).then(response => {
             if(response.status === 200)
             {
@@ -336,6 +345,7 @@ export function finalFilter(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/finalFilter`, payload).then(response => {
             if(response.status === 200)
             {
@@ -361,6 +371,7 @@ export function getCustomerOrders(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getUserOrders`, payload).then(response => {
             if(response.status === 200)
             {
@@ -411,15 +422,17 @@ export function getCustomerOrders(payload)
 }
 export function filter_customer_orders(payload)
 {
+    console.log("Trying to fitler customer orders");
     let data = {}
     return(dispatch) =>{
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/filterCustomerOrders`, payload).then(response => {
             if(response.status === 200)
             {
                 var result = []
                 var count = 0
                 console.log("Length of response is : ", response.data.length)
-                if(response.data.length > 1)
+                if(response.data.length > 0)
                 {
                     for(let i in response.data)
                     {
@@ -445,6 +458,7 @@ export function filter_customer_orders(payload)
                                         customer_orders : result,
                                         message : "Customer Orders updated"
                                     }
+                                    console.log("``~~~~~~~~~~~~~~~~Customer orders ikn acitons are ---------", data)
                                     dispatch({type : FILTER_CUSTOMER_ORDERS, data})
                                 }
                             }        
@@ -467,6 +481,7 @@ export function get_customer_events()
 {
     let data = {}
     return(dispatch) =>{
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getEvents`).then(response => {
             if(response.status === 200)
             {   
@@ -484,6 +499,7 @@ export function search_customer_events(payload)
 {
     let data = {}
     return(dispatch) =>{
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/searchEvents`, payload).then(response => {
             if(response.status === 200)
             {   
@@ -502,6 +518,7 @@ export function get_customer_registered_events(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getUserEvents`, payload).then(response => {
             if(response.status === 200)
             {
@@ -542,6 +559,7 @@ export function get_customer_reviews(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getUserReviews`, payload).then(response => {
             if(response.status === 200)
             {
@@ -594,6 +612,7 @@ export function get_user_cart_details()
         var user = {
             user_id : window.sessionStorage.getItem("UserId")
         }
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getUserCartDetails`, user).then(response => {
             if(response.status === 200)
             {
@@ -653,6 +672,7 @@ export function get_customer_restraurant_details(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getRestrauDetails`, payload).then(response => {
             if(response.status === 200)
             {
@@ -669,6 +689,7 @@ export function get_customer_restraurant_dishes(payload)
 {
     let data = {}
     return(dispatch) =>{
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getDishes`, payload).then(response => {
             if(response.status === 200)
             {
@@ -686,6 +707,7 @@ export function delete_cart_item(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/deleteCartItem`, payload).then(response => {
             if(response.status === 200)
             {
@@ -712,6 +734,7 @@ export function place_order(payload)
     console.log("Order is", payload)
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/placeOrder`, payload).then(response => {
             if(response.status === 200)
             {
@@ -732,6 +755,7 @@ export function get_customer_current_dish_details(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getDishDetails`, payload).then(response => {
             if(response.status === 200)
             {
@@ -757,6 +781,7 @@ export function set_cart_item_quantity(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/setCartItemQuantity`, payload).then(response => {
             if(response.status === 200)
             {
@@ -781,6 +806,7 @@ export function get_cart_item_details(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getCartItemDetails`, payload).then(reponse => {
             if(reponse.status === 200)
             {
@@ -797,6 +823,7 @@ export function register_for_an_event(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/registerUserForEvent`, payload).then(response => {
             if(response.status === 299)
             {
@@ -839,6 +866,7 @@ export function add_item_to_cart(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/addItemToCart`, payload).then(response => {
             if(response.status === 200)
             {
@@ -869,6 +897,7 @@ export function get_customer_restraurant_images(payload)
 {
     let data = {}
     return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
         axios.post(`${BACKEND}/getRestraurantImages`, payload).then(response => {
             if(response.status === 200)
             {
@@ -915,5 +944,50 @@ export function upload_user_photo(payload)
                 });
             }
         });
+    }
+}
+export function get_customer_chats(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.post(`${BACKEND}/getCustomerChats`, payload).then(response => {
+            if(response.status === 200)
+            {
+                var result = [];
+                for(let i = 0; i < response.data.length; i++)
+                {
+                    let chat = response.data[i];
+                    let restraurant = {
+                        RestrauId : chat.restraurant_id
+                    }
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;                   
+                    }
+                    temp().then(restraurantResponse=>{
+                        if(restraurantResponse.status === 200)
+                        {
+                            chat = {...chat, restraurant : restraurantResponse.data}
+                            result.push(chat);
+                            if(result.length === response.data.length)
+                            {
+                                data = {
+                                    message : "Fetched customer chats",
+                                    customer_chats : result
+                                }
+                                dispatch({type : GET_CUSTOMER_CHATS, data});
+                            }
+                        }        
+                    })
+
+                }
+                // data = {
+                //     message : "Fetched customer chats",
+                //     customer_chats : response.data
+                // }
+                // dispatch({type : GET_CUSTOMER_CHATS, data});
+            }
+        })
     }
 }

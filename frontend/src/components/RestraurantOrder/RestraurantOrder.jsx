@@ -5,7 +5,7 @@ import MiddleRestraurantProfile from '../MiddleRestraurantProfile/MiddleRestraur
 import Axios from 'axios';
 import { BACKEND } from '../../Config';
 import RestraurantOrderDetails from '../RestraurantOrderDetails/RestraurantOrderDetails';
-import { Checkbox, Col, notification, Row } from 'antd';
+import { Checkbox, Col, notification, Pagination, Row } from 'antd';
 import { Link, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faCalendarDay, faJedi, faStar, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -23,7 +23,12 @@ class RestraurantOrder extends Component {
             currentDelivery : false,
             currentTakeout : false,
             pastDelivery : false,
-            pastTakeout : false
+            pastTakeout : false,
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
         if(window.sessionStorage.getItem('RestrauLoggedIn') === 'true')
         {
@@ -38,8 +43,36 @@ class RestraurantOrder extends Component {
         document.getElementById("pastOrdersFilters").style.display = 'none'
         document.getElementById("currentOrdersFilters").style.display = 'none'
     }
-    
-    
+    componentWillReceiveProps(){
+        setTimeout(() => {
+            this.setState({
+                pageCount: Math.ceil(this.props.restraurant_orders.length/this.state.perPage)
+            })
+            this.setElementsForCurrentPage();
+        })
+    }
+    setElementsForCurrentPage = () => {
+        let elements = this.props.restraurant_orders.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        console.log("Inside show catolgocal data function", this.state.elements);
+        return this.state.elements.map(i => {
+            // console.log("Calling child with i ------------------", i)
+            return (
+                <RestraurantOrderDetails order = {i} key = {i._id}/>
+              )
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }
     handleCurrentOrders = (e) => {
        
         console.log(e.target.checked)
@@ -214,11 +247,11 @@ class RestraurantOrder extends Component {
         if(this.props.restraurant_orders)
         {
             console.log("Restraurant orders are", this.props.restraurant_orders)
-            temp = this.props.restraurant_orders.map(i => {
-                return(
-                    <RestraurantOrderDetails order = {i} />
-                )
-            })
+            // temp = this.props.restraurant_orders.map(i => {
+            //     return(
+            //         <RestraurantOrderDetails order = {i} />
+            //     )
+            // })
         }
         else{
             temp = <div>
@@ -229,6 +262,22 @@ class RestraurantOrder extends Component {
         if(!window.sessionStorage.getItem('RestrauLoggedIn'))
         {
             redirectVar = <Redirect to ='/restrauSignIn'></Redirect>
+        }
+        let paginationElement;
+        if(this.props.restraurant_orders)
+        {
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.restraurant_orders.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         return (
             <div>
@@ -338,9 +387,13 @@ class RestraurantOrder extends Component {
                         </Col>
                         <Col md = {8}>
                             {temp}
+                            <div>{this.showCatalogicData()}</div>
                         </Col>
                     </Row>
                     
+                </div>
+                <div style = {{marginLeft : "75%", marginTop : "3%"}}>
+                    {paginationElement}
                 </div>
             </div>
         )

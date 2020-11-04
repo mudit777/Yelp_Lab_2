@@ -1,6 +1,6 @@
 import { faCalendarWeek, faJedi, faStar, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Checkbox, Col, notification, Row } from 'antd';
+import { Checkbox, Col, notification, Pagination, Row } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom';
@@ -23,7 +23,12 @@ class CustomerOrders extends Component {
             currentTakeout : false,
             pastDelivery : false,
             pastTakeout : false,  
-            cancel : false
+            cancel : false,
+            offset: 0,
+            elements: [],
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 1
         }
     }
     componentDidMount() {
@@ -38,10 +43,14 @@ class CustomerOrders extends Component {
     }
     componentWillReceiveProps()
     {
+        
         setTimeout(() => {
+            console.log("New props are ===============", this.props.customer_orders)
             this.setState({
-                orders : this.props.customer_orders
+                orders : this.props.customer_orders,
+                pageCount: Math.ceil(this.props.customer_orders.length/this.state.perPage),
             })
+            this.setElementsForCurrentPage();
         })
     }
     filterOrders = (data) => {
@@ -51,6 +60,28 @@ class CustomerOrders extends Component {
         }
         this.props.filter_customer_orders(myJson);
     }
+    setElementsForCurrentPage = () => {
+        let elements = this.props.customer_orders.slice(this.state.offset, this.state.offset + this.state.perPage);
+        this.setState({ 
+            elements : elements
+        });
+    }
+    showCatalogicData = () => {
+        console.log("Inside show catolgocal data function", this.state.elements);
+        return this.state.elements.map(i => {
+            // console.log("Calling child with i ------------------", i)
+            return(
+                <CustomerOrderDetails order = {i} key = {i.order_id} />
+            )
+           });
+    }
+    handlePageClick = (pageNo) => {
+        const selectedPage = pageNo - 1; 
+        const offset = selectedPage * this.state.perPage;
+        this.setState({ currentPage: selectedPage, offset: offset }, 
+            () => this.setElementsForCurrentPage()
+            );
+    }
     render() {
         let redirectVar = null;
         if(!window.sessionStorage.getItem('isLoggedIn'))
@@ -58,13 +89,29 @@ class CustomerOrders extends Component {
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
         var temp = null;
+        // if(this.props.customer_orders)
+        // {
+        //     temp = this.props.customer_orders.map(i => {
+        //         return(
+        //             <CustomerOrderDetails order = {i} key = {i.order_id} />
+        //         )
+        //     })
+        // }
+        let paginationElement;
         if(this.props.customer_orders)
         {
-            temp = this.props.customer_orders.map(i => {
-                return(
-                    <CustomerOrderDetails order = {i} key = {i.order_id} />
-                )
-            })
+            if(this.state.pageCount > 0)
+            {
+                paginationElement = (<Pagination
+                    defaultCurrent={1} 
+                    onChange={this.handlePageClick}       
+                    size="small" 
+                    total={this.props.customer_orders.length}
+                    showTotal={(total, range) => 
+                    `${range[0]}-${range[1]} of ${total} items`}   
+                    defaultPageSize={this.state.perPage}
+                />)
+            }
         }
         if(this.state.orders.length === 0)
         {
@@ -121,8 +168,12 @@ class CustomerOrders extends Component {
                         </Col>
                         <Col md = {6}>
                             {temp}
+                            <div>{this.showCatalogicData()}</div>
                         </Col>
                     </Row>
+                </div>
+                <div style = {{marginLeft : "75%", marginTop : "3%"}}>
+                    {paginationElement}
                 </div>
             </div>
         )
