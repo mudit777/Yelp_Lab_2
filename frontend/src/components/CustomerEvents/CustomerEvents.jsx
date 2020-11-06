@@ -60,6 +60,18 @@ class CustomerEvents extends Component {
         this.props.search_customer_events(myJson);
         
     }
+    sortAscendingOrder = () => {
+        this.setState({
+            events : this.state.events.sort((a, b) => (a.event_date > b.event_date) ? 1 : (a.event_date === b.event_date) ? ((a.event_time > b.event_time) ? 1 : -1) : -1 )
+        })
+        this.setElementsForCurrentPage();
+    }
+    sortDescendingOrder = () => {
+        this.setState({
+            events : this.state.events.sort((a, b) => (a.event_date > b.event_date) ? -1 : (a.event_date === b.event_date) ? ((a.event_time > b.event_time) ? -1 : 1) : 1 )
+        })
+        this.setElementsForCurrentPage();
+    }
     render() {
         console.log(window.sessionStorage)
         let redirectVar = null;
@@ -109,16 +121,17 @@ class CustomerEvents extends Component {
                                 <li style = {{marginTop : "5%"}}>
                                     <Button onClick = {this.searchEvent} style = {{width:"100%"}}>Search</Button>
                                 </li>
+                                <li style = {{marginTop : "5%"}}>
+                                    <Button onClick = {this.sortAscendingOrder} style = {{width:"100%"}}>Ascending Order</Button>
+                                </li>
+                                <li style = {{marginTop : "5%"}}>
+                                    <Button onClick = {this.sortDescendingOrder} style = {{width:"100%"}}>Descending Order</Button>
+                                </li>
                             </ul>
                         </Col>
                         <Col md = {8} style = {{marginLeft: "4%"}}>
                         {temp}
                         <div>{this.showCatalogicData()}</div>
-                            {/* {this.state.events.map(i => {
-                                return(
-                                    <CustomerEventRegistrationCard event = {i} key = {i.event_id} />
-                                )
-                            })} */}
                         </Col>
                     </Row>
                 </div>

@@ -369,6 +369,7 @@ export function finalFilter(payload)
 }
 export function getCustomerOrders(payload)
 {
+    console.log("Finction has been called")
     let data = {}
     return(dispatch) => {
         axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
@@ -391,17 +392,63 @@ export function getCustomerOrders(payload)
                     temp().then(restraurantResponse=>{
                         if(restraurantResponse.status === 200)
                         {
-                            order = {...order, restraurant : restraurantResponse.data}
-                            result.push(order)
-                            count++;
-                            if(count === response.data.length)
+                            var items = order.items.split(',')
+                            // console.log("Order in indexz is ---------------", order.items)
+                            var dishes = []
+                            for(let j in items)
                             {
-                                data = { 
-                                    customer_orders : result,
-                                    message : "Customer Orders updated"
+                                // console.log("Executing inner loop", j)
+                                let temp1 = async () => {
+                                    var cart = {
+                                        cart_id : items[j]
+                                    }
+                                    const itemResponse = await axios.post(`${BACKEND}/getCartItemDetails`, cart)
+                                    return itemResponse;
                                 }
-                                dispatch({type : CUSTOMRE_ORDERS, data})
+                                temp1().then(itemResponse => {
+                                    if(itemResponse.status === 200)
+                                    {
+                                        // console.log("Item response ", j, "is", itemResponse.data)
+                                        let temp2 = async () => {
+                                            var dish = {
+                                                dish_id : itemResponse.data.dish_id
+                                            }
+                                            const dishResponse = await axios.post(`${BACKEND}/getDishDetails`, dish)
+                                            return dishResponse;
+                                        }
+                                        temp2().then(dishResponse => {
+                                            // console.log("dish response is", dishResponse.data)
+                                            if(dishResponse.status === 200)
+                                            {
+                                                let dishQuantity = {
+                                                    dishName : dishResponse.data.dish_name,
+                                                    quantity : itemResponse.data.quantity
+                                                }
+                                                dishes.push(dishQuantity);
+                                                if(dishes.length === items.length)
+                                                {
+                                                    // console.log("dishes areeee", dishes)
+                                                    order = {...order, restraurant : restraurantResponse.data, dishes : dishes}
+                                                    // console.log("FInal order is", order)
+                                                    result.push(order)
+                                                    count++;
+                                                    if(count === response.data.length)
+                                                    {
+                                                        
+                                                        data = { 
+                                                            customer_orders : result,
+                                                            message : "Customer Orders updated"
+                                                        }
+                                                        console.log("dishpatching order", data)
+                                                        dispatch({type : CUSTOMRE_ORDERS, data})
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
                             }
+                            
                         }        
                     })
                 }     
@@ -431,50 +478,93 @@ export function filter_customer_orders(payload)
             {
                 var result = []
                 var count = 0
-                console.log("Length of response is : ", response.data.length)
-                if(response.data.length > 0)
+                for(let i in response.data)
                 {
-                    for(let i in response.data)
-                    {
-                        let order = response.data[i];
-                        var restraurant = {
-                            RestrauId : order.restraurant_id
-                        }
-    
-                        let temp = async () => {
-                            const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
-                            return restrauResponse;                   
-                        }
-                        temp().then(restraurantResponse=>{
-                            if(restraurantResponse.status === 200)
+                    let order = response.data[i];
+                    var restraurant = {
+                        RestrauId : order.restraurant_id
+                    }
+
+                    let temp = async () => {
+                        const restrauResponse = await axios.post(`${BACKEND}/getRestrauDetails`, restraurant)
+                        return restrauResponse;                   
+                    }
+                    temp().then(restraurantResponse=>{
+                        if(restraurantResponse.status === 200)
+                        {
+                            var items = order.items.split(',')
+                            // console.log("Order in indexz is ---------------", order.items)
+                            var dishes = []
+                            for(let j in items)
                             {
-                                order = {...order, restraurant : restraurantResponse.data}
-                                result.push(order)
-                                count++;
-                                console.log("Count is ", count)
-                                if(count === response.data.length)
-                                {
-                                    data = { 
-                                        customer_orders : result,
-                                        message : "Customer Orders updated"
+                                // console.log("Executing inner loop", j)
+                                let temp1 = async () => {
+                                    var cart = {
+                                        cart_id : items[j]
                                     }
-                                    console.log("``~~~~~~~~~~~~~~~~Customer orders ikn acitons are ---------", data)
-                                    dispatch({type : FILTER_CUSTOMER_ORDERS, data})
+                                    const itemResponse = await axios.post(`${BACKEND}/getCartItemDetails`, cart)
+                                    return itemResponse;
                                 }
-                            }        
-                        })
-                    }
-                }
-                else{
-                    data = { 
-                        customer_orders : response.data,
-                        message : "Customer Orders updated"
-                    }
-                    dispatch({type : FILTER_CUSTOMER_ORDERS, data})
-                }
+                                temp1().then(itemResponse => {
+                                    if(itemResponse.status === 200)
+                                    {
+                                        // console.log("Item response ", j, "is", itemResponse.data)
+                                        let temp2 = async () => {
+                                            var dish = {
+                                                dish_id : itemResponse.data.dish_id
+                                            }
+                                            const dishResponse = await axios.post(`${BACKEND}/getDishDetails`, dish)
+                                            return dishResponse;
+                                        }
+                                        temp2().then(dishResponse => {
+                                            // console.log("dish response is", dishResponse.data)
+                                            if(dishResponse.status === 200)
+                                            {
+                                                let dishQuantity = {
+                                                    dishName : dishResponse.data.dish_name,
+                                                    quantity : itemResponse.data.quantity
+                                                }
+                                                dishes.push(dishQuantity);
+                                                if(dishes.length === items.length)
+                                                {
+                                                    // console.log("dishes areeee", dishes)
+                                                    order = {...order, restraurant : restraurantResponse.data, dishes : dishes}
+                                                    // console.log("FInal order is", order)
+                                                    result.push(order)
+                                                    count++;
+                                                    if(count === response.data.length)
+                                                    {
+                                                        
+                                                        data = { 
+                                                            customer_orders : result,
+                                                            message : "Customer Orders updated"
+                                                        }
+                                                        console.log("dishpatching order", data)
+                                                        dispatch({type : FILTER_CUSTOMER_ORDERS, data})
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                            
+                        }        
+                    })
+                }     
                 
             }
-        }).catch()
+           
+        }).catch(err => {
+            if(err)
+            {
+                notification["error"]({
+                    message: 'Server Sider error',
+                    description:
+                      'Please try again in few minutes',
+                  });
+            }
+        })
     }   
 }
 export function get_customer_events()

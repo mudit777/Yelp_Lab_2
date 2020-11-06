@@ -160,18 +160,74 @@ export function get_restraurant_orders(payload)
                     temp().then(userResponse => {
                         if(userResponse.status === 200)
                         {
-                            order = {...order, user : userResponse.data}
-                            result.push(order)
-                            count++;
-                            if(count === response.data.length)
+                            var items = order.items.split(',')
+                            // console.log("Order in indexz is ---------------", order.items)
+                            var dishes = []
+                            for(let j in items)
                             {
-                                data = {
-                                    restraurant_orders : result,
-                                    message : "Restraurant orders fetched"
+                                // console.log("Executing inner loop", j)
+                                let temp1 = async () => {
+                                    var cart = {
+                                        cart_id : items[j]
+                                    }
+                                    const itemResponse = await axios.post(`${BACKEND}/getCartItemDetails`, cart)
+                                    return itemResponse;
                                 }
-                                console.log("restraurant orders are", data)
-                                dispatch({type : GET_RESTRAURANT_ORDERS, data})
+                                temp1().then(itemResponse => {
+                                    if(itemResponse.status === 200)
+                                    {
+                                        // console.log("Item response ", j, "is", itemResponse.data)
+                                        let temp2 = async () => {
+                                            var dish = {
+                                                dish_id : itemResponse.data.dish_id
+                                            }
+                                            const dishResponse = await axios.post(`${BACKEND}/getDishDetails`, dish)
+                                            return dishResponse;
+                                        }
+                                        temp2().then(dishResponse => {
+                                            // console.log("dish response is", dishResponse.data)
+                                            if(dishResponse.status === 200)
+                                            {
+                                                let dishQuantity = {
+                                                    dishName : dishResponse.data.dish_name,
+                                                    quantity : itemResponse.data.quantity
+                                                }
+                                                dishes.push(dishQuantity);
+                                                if(dishes.length === items.length)
+                                                {
+                                                    // console.log("dishes areeee", dishes)
+                                                    order = {...order, user : userResponse.data, dishes : dishes}
+                                                    // console.log("FInal order is", order)
+                                                    result.push(order)
+                                                    count++;
+                                                    if(count === response.data.length)
+                                                    {
+                                                        
+                                                        data = {
+                                                            restraurant_orders : result,
+                                                            message : "Restraurant orders fetched"
+                                                        }
+                                                        console.log("restraurant orders are", data)
+                                                        dispatch({type : GET_RESTRAURANT_ORDERS, data})
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
                             }
+                            // order = {...order, user : userResponse.data}
+                            // result.push(order)
+                            // count++;
+                            // if(count === response.data.length)
+                            // {
+                            //     data = {
+                            //         restraurant_orders : result,
+                            //         message : "Restraurant orders fetched"
+                            //     }
+                            //     console.log("restraurant orders are", data)
+                            //     dispatch({type : GET_RESTRAURANT_ORDERS, data})
+                            // }
                         }
                     })
                 }
@@ -189,48 +245,138 @@ export function filter_restraurant_orders(payload)
         axios.post(`${BACKEND}/filterRestraurantOrders`, payload).then(response => {
             if(response.status === 200)
             {
-                if(response.data.length > 0)
+                var result = [];
+                var count = 0;
+                for(let i in response.data)
                 {
-                    var result = []
-                    var count = 0
-                    for(let i in response.data)
-                    {
-                        let order = response.data[i]
-                        var user = {
-                            UserId : order.user_id
-                        }
-                        let temp = async () => {
-                            const userResponse = await axios.post(`${BACKEND}/getUserDetails`, user)
-                            return userResponse;
-                        }
-                        temp().then(userResponse => {
-                            if(userResponse.status === 200)
+                    let order = response.data[i];
+                    var user = {
+                        UserId : order.user_id
+                    }
+                    let temp = async () => {
+                        const userResponse = await axios.post(`${BACKEND}/getUserDetails`, user)
+                        return userResponse;
+                    }
+                    temp().then(userResponse => {
+                        if(userResponse.status === 200)
+                        {
+                            var items = order.items.split(',')
+                            // console.log("Order in indexz is ---------------", order.items)
+                            var dishes = []
+                            for(let j in items)
                             {
-                                order = {...order, user : userResponse.data}
-                                result.push(order)
-                                count++;
-                                if(count === response.data.length)
-                                {
-                                    data = {
-                                        restraurant_orders : result,
-                                        message : "Restraurant orders fetched"
+                                // console.log("Executing inner loop", j)
+                                let temp1 = async () => {
+                                    var cart = {
+                                        cart_id : items[j]
                                     }
-                                    console.log("restraurant orders are", data)
-                                    dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
+                                    const itemResponse = await axios.post(`${BACKEND}/getCartItemDetails`, cart)
+                                    return itemResponse;
                                 }
+                                temp1().then(itemResponse => {
+                                    if(itemResponse.status === 200)
+                                    {
+                                        // console.log("Item response ", j, "is", itemResponse.data)
+                                        let temp2 = async () => {
+                                            var dish = {
+                                                dish_id : itemResponse.data.dish_id
+                                            }
+                                            const dishResponse = await axios.post(`${BACKEND}/getDishDetails`, dish)
+                                            return dishResponse;
+                                        }
+                                        temp2().then(dishResponse => {
+                                            // console.log("dish response is", dishResponse.data)
+                                            if(dishResponse.status === 200)
+                                            {
+                                                let dishQuantity = {
+                                                    dishName : dishResponse.data.dish_name,
+                                                    quantity : itemResponse.data.quantity
+                                                }
+                                                dishes.push(dishQuantity);
+                                                if(dishes.length === items.length)
+                                                {
+                                                    // console.log("dishes areeee", dishes)
+                                                    order = {...order, user : userResponse.data, dishes : dishes}
+                                                    // console.log("FInal order is", order)
+                                                    result.push(order)
+                                                    count++;
+                                                    if(count === response.data.length)
+                                                    {
+                                                        
+                                                        data = {
+                                                            restraurant_orders : result,
+                                                            message : "Restraurant orders fetched"
+                                                        }
+                                                        console.log("restraurant orders are", data)
+                                                        dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
                             }
-                        })
-                    }
+                            // order = {...order, user : userResponse.data}
+                            // result.push(order)
+                            // count++;
+                            // if(count === response.data.length)
+                            // {
+                            //     data = {
+                            //         restraurant_orders : result,
+                            //         message : "Restraurant orders fetched"
+                            //     }
+                            //     console.log("restraurant orders are", data)
+                            //     dispatch({type : GET_RESTRAURANT_ORDERS, data})
+                            // }
+                        }
+                    })
                 }
-                else{
-                    data = {
-                        restraurant_orders : response.data,
-                        message : "Restraurant orders fetched"
-                    }
-                    dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
-                }
-                
+               
             }
+            // if(response.status === 200)
+            // {
+            //     if(response.data.length > 0)
+            //     {
+            //         var result = []
+            //         var count = 0
+            //         for(let i in response.data)
+            //         {
+            //             let order = response.data[i]
+            //             var user = {
+            //                 UserId : order.user_id
+            //             }
+            //             let temp = async () => {
+            //                 const userResponse = await axios.post(`${BACKEND}/getUserDetails`, user)
+            //                 return userResponse;
+            //             }
+            //             temp().then(userResponse => {
+            //                 if(userResponse.status === 200)
+            //                 {
+            //                     order = {...order, user : userResponse.data}
+            //                     result.push(order)
+            //                     count++;
+            //                     if(count === response.data.length)
+            //                     {
+            //                         data = {
+            //                             restraurant_orders : result,
+            //                             message : "Restraurant orders fetched"
+            //                         }
+            //                         console.log("restraurant orders are", data)
+            //                         dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
+            //                     }
+            //                 }
+            //             })
+            //         }
+            //     }
+            //     else{
+            //         data = {
+            //             restraurant_orders : response.data,
+            //             message : "Restraurant orders fetched"
+            //         }
+            //         dispatch({type : FILTER_RESTRAURANT_ORDERS, data})
+            //     }
+                
+            // }
         })
     }
 }

@@ -15,7 +15,7 @@ class GoogleMap extends Component {
             location : [],
             user_location : ""
         }
-        // this.getCoordinates();
+        this.getCoordinates();
         if(window.sessionStorage.getItem("isLoggedIn") === 'true')
         {
             this.getUserDetails();
@@ -34,7 +34,7 @@ class GoogleMap extends Component {
                     location += i + "+"
                 })
                 location = location + "+" + response.data.zip_code
-                Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
+                Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
                     this.setState({
                         user_location : response.data.results[0].geometry.location
                     })
@@ -58,24 +58,24 @@ class GoogleMap extends Component {
         {
             // this.props.getRestraurant();
             var data = []
-            setTimeout(() => {
-                this.props.restraurants.map(i => {
-                    var location = i.location.split(" ");
-                    var temp = ""
-                    location.map(j => {
-                        temp = temp + j + "+"
-                    })
-                    temp += i.zip_code;
-                    Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ temp +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
-                        data.push(response.data.results[0].geometry.location)
-                    })
-                })
-                setTimeout(() => {
-                    this.setState({
-                        location : data
-                    })
-                }, 100)
-            }, 500)
+            // setTimeout(() => {
+            //     this.props.restraurants.map(i => {
+            //         var location = i.location.split(" ");
+            //         var temp = ""
+            //         location.map(j => {
+            //             temp = temp + j + "+"
+            //         })
+            //         temp += i.zip_code;
+            //         Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ temp +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
+            //             data.push(response.data.results[0].geometry.location)
+            //         })
+            //     })
+            //     setTimeout(() => {
+            //         this.setState({
+            //             location : data
+            //         })
+            //     }, 100)
+            // }, 500)
         }
                 
     }
@@ -86,6 +86,32 @@ class GoogleMap extends Component {
             if(this.props.restraurants.length > 0)
             {
                 this.props.restraurants.map(i => {
+                    
+                    Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ i.location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
+                        console.log("~~~~~~~~~~~~~~~~~ response is ~~~~~~~~~~~~~~~~`", response)
+                        var myJson = {
+                            title : i.restraurant_name,
+                            lat : response.data.results[0].geometry.location.lat,
+                            lng : response.data.results[0].geometry.location.lng
+                        }
+                        data.push(myJson)
+                    })
+                })
+                setTimeout(() => {
+                    this.setState({
+                        location : data
+                    })
+                }, 500)
+            }
+            
+        }, 0)
+    }
+    getCoordinates = () => {
+        Axios.get(`${BACKEND}/getAllRestraurants`).then(response => {
+            if(response.status === 200)
+            {
+                var data = []
+                response.data.map(i => {
                     var location = i.location.split(" ");
                     var temp = ""
                     location.map(j => {
@@ -105,41 +131,11 @@ class GoogleMap extends Component {
                     this.setState({
                         location : data
                     })
-                }, 500)
-            }
-            
-        }, 0)
-    }
-    // getCoordinates = () => {
-    //     Axios.get(`${BACKEND}/getAllRestraurants`).then(response => {
-    //         if(response.status === 200)
-    //         {
-    //             var data = []
-    //             response.data.map(i => {
-    //                 var location = i.location.split(" ");
-    //                 var temp = ""
-    //                 location.map(j => {
-    //                     temp = temp + j + "+"
-    //                 })
-    //                 temp += i.zip_code;
-    //                 Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ temp +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
-    //                     var myJson = {
-    //                         title : i.restraurant_name,
-    //                         lat : response.data.results[0].geometry.location.lat,
-    //                         lng : response.data.results[0].geometry.location.lng
-    //                     }
-    //                     data.push(myJson)
-    //                 })
-    //             })
-    //             setTimeout(() => {
-    //                 this.setState({
-    //                     location : data
-    //                 })
-    //             }, 1000)
+                }, 1000)
                 
-    //         }
-    //     })
-    // }    
+            }
+        })
+    }    
     static defaultProps = {
         center: {
           lat: 37.336020,
@@ -152,7 +148,7 @@ class GoogleMap extends Component {
             <div>
                 <div style={{ height: '100vh', width: '190%' }}>
                     <GoogleMapReact
-                        bootstrapURLKeys={{ key: "AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss" }}
+                        bootstrapURLKeys={{ key: "AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I" }}
                         defaultCenter={this.props.center}
                         defaultZoom={this.props.zoom}
                         >
@@ -204,3 +200,4 @@ function mapDispatchToProps(dispatch) {
  
   const googleMap = connect(mapStateToProps, mapDispatchToProps)(GoogleMap);
   export default googleMap;
+

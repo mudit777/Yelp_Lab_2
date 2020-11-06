@@ -1,6 +1,6 @@
 import { faCalendarWeek, faJedi, faStar, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Checkbox, Col, notification, Pagination, Row } from 'antd';
+import { Checkbox, Col, notification, Pagination, Row, Spin } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom';
@@ -28,7 +28,8 @@ class CustomerOrders extends Component {
             elements: [],
             perPage: 5,
             currentPage: 1,
-            pageCount: 1
+            pageCount: 1,
+            spin : false
         }
     }
     componentDidMount() {
@@ -37,6 +38,9 @@ class CustomerOrders extends Component {
             var user = {
                 user_id : sessionStorage.getItem("UserId")
             }
+            this.setState({
+                spin : true
+            })
             this.props.getCustomerOrders(user);
         }
        
@@ -50,6 +54,9 @@ class CustomerOrders extends Component {
                 orders : this.props.customer_orders,
                 pageCount: Math.ceil(this.props.customer_orders.length/this.state.perPage),
             })
+            this.setState({
+                spin : false
+            })
             this.setElementsForCurrentPage();
         })
     }
@@ -58,6 +65,9 @@ class CustomerOrders extends Component {
             filter : data,
             user_id : sessionStorage.getItem("UserId")
         }
+        this.setState({
+            spin : true
+        })
         this.props.filter_customer_orders(myJson);
     }
     setElementsForCurrentPage = () => {
@@ -89,14 +99,10 @@ class CustomerOrders extends Component {
             redirectVar = <Redirect to ='/landingPage'></Redirect>
         }
         var temp = null;
-        // if(this.props.customer_orders)
-        // {
-        //     temp = this.props.customer_orders.map(i => {
-        //         return(
-        //             <CustomerOrderDetails order = {i} key = {i.order_id} />
-        //         )
-        //     })
-        // }
+        if(this.props.customer_orders)
+        {
+           temp = this.showCatalogicData()
+        }
         let paginationElement;
         if(this.props.customer_orders)
         {
@@ -118,6 +124,10 @@ class CustomerOrders extends Component {
             temp = <div>
                 <h1 style = {{color : "#d32323", fontWeight : "bolder"}}>No such Orders found</h1>
             </div>
+        }
+        if(this.state.spin)
+        {
+            temp = <Spin size = {"large"} spinning = {this.state.spin} />
         }
         return (
             <div>
@@ -168,7 +178,7 @@ class CustomerOrders extends Component {
                         </Col>
                         <Col md = {6}>
                             {temp}
-                            <div>{this.showCatalogicData()}</div>
+                            {/* <div>{this.showCatalogicData()}</div> */}
                         </Col>
                     </Row>
                 </div>

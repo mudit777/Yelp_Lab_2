@@ -117,7 +117,7 @@ class CustomerHome extends Component {
                             <div>{this.showCatalogicData()}</div>
                         </Col>
                         <Col md = {3} style = {{marginLeft : "27%"}}>
-                            {/* <GoogleMap  restraurants = {this.state.restraurants}/> */}
+                            <GoogleMap  restraurants = {this.state.restraurants}/>
                         </Col>
                     </Row>
                 </div>

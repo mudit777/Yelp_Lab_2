@@ -272,10 +272,10 @@ class RestraurantOrderDetails extends Component {
                             </Col>
                             <Col md = {6} style={{borderLeft : "1px solid lightgrey", paddingLeft: "0.5%", marginLeft : "10%"}}>
                                 <ul>
-                                    {this.state.cartDishes.map(i => {
+                                    {this.props.order.dishes.map(i => {
                                         return(
                                             <li style = {{width :"150%"}}>
-                                                <CartItemDisplay key = {i} item = {i} />    
+                                                <CartItemDisplay dish = {i} />    
                                             </li>
                                         )
                                     })}

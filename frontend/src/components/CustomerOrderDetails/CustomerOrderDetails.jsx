@@ -125,10 +125,10 @@ class CustomerOrderDetails extends Component {
                                     <li>
                                         <h3>Items</h3>
                                         <ul style = {{listStyleType:"none"}}>
-                                            {this.state.cartDishes.map(i =>{ 
+                                            {this.props.order.dishes.map(i =>{ 
                                                 return(
                                                     <li style={{width:"175%"}} key = {Math.random()}>
-                                                        <CartItemDisplay item = {i}/>
+                                                        <CartItemDisplay dish = {i}/>
                                                     </li>
                                                     
                                                 )

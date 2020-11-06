@@ -68,6 +68,13 @@ class RestraurantView extends Component {
                     reviewsCount : this.props.customer_restraurant.reviews_count,
                     email : this.props.customer_restraurant.email,
                     phoneNumber : this.props.customer_restraurant.phone_number,
+                    
+                })
+                // this.setElementsForCurrentPage();
+            }
+            if(this.props.customer_restraurant_dishes)
+            {
+                this.setState({
                     dishes : this.props.customer_restraurant_dishes,
                     pageCount: Math.ceil(this.props.customer_restraurant_dishes.length/this.state.perPage),
                 })

@@ -3,6 +3,7 @@ var Carts = require('../../../Models/cartModel');
 
 function handle_request(message, callback)
 {
+
     Carts.findOne({_id : ObjectId(message.cart_id)}, (err, cart) => {
         if(err)
         {

@@ -5,7 +5,7 @@ import MiddleRestraurantProfile from '../MiddleRestraurantProfile/MiddleRestraur
 import Axios from 'axios';
 import { BACKEND } from '../../Config';
 import RestraurantOrderDetails from '../RestraurantOrderDetails/RestraurantOrderDetails';
-import { Checkbox, Col, notification, Pagination, Row } from 'antd';
+import { Checkbox, Col, notification, Pagination, Row, Spin } from 'antd';
 import { Link, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faCalendarDay, faJedi, faStar, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -28,25 +28,31 @@ class RestraurantOrder extends Component {
             elements: [],
             perPage: 5,
             currentPage: 1,
-            pageCount: 1
+            pageCount: 1,
+            spin : false
         }
         if(window.sessionStorage.getItem('RestrauLoggedIn') === 'true')
         {
             var restraurant = {
                 restraurant_id : window.sessionStorage.getItem("RestrauId")
             }
+            
             this.props.get_restraurant_orders(restraurant);
         }
        
     }
     componentDidMount() {
+        this.setState({
+            spin : true
+        })
         document.getElementById("pastOrdersFilters").style.display = 'none'
         document.getElementById("currentOrdersFilters").style.display = 'none'
     }
     componentWillReceiveProps(){
         setTimeout(() => {
             this.setState({
-                pageCount: Math.ceil(this.props.restraurant_orders.length/this.state.perPage)
+                pageCount: Math.ceil(this.props.restraurant_orders.length/this.state.perPage),
+                spin : false
             })
             this.setElementsForCurrentPage();
         })
@@ -243,7 +249,9 @@ class RestraurantOrder extends Component {
         }
     }
     render() {
+        console.log("The spin state is -----------------------------", this.state.spin)
         var temp = null;
+        
         if(this.props.restraurant_orders)
         {
             console.log("Restraurant orders are", this.props.restraurant_orders)
@@ -262,6 +270,10 @@ class RestraurantOrder extends Component {
         if(!window.sessionStorage.getItem('RestrauLoggedIn'))
         {
             redirectVar = <Redirect to ='/restrauSignIn'></Redirect>
+        }
+        if(this.state.spin)
+        {
+            temp = <Spin size = {"large"} spinning = {this.state.spin} />
         }
         let paginationElement;
         if(this.props.restraurant_orders)
