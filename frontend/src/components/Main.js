@@ -26,6 +26,7 @@ import UploadRestraurantPictures from './UploadRestraurantPictures/UploadRestrau
 import ViewCustomerProfile from './ViewCustomerProfile/ViewCustomerProfile';
 import RestraurantMessages from './RestraurantMessages/RestraurantMessages';
 import CustomerChats from './CustomerChats/CustomerChats';
+import AllCustomers from './AllCustomers/AllCustomers';
 class Main extends Component {
     render(){
         return(
@@ -56,6 +57,7 @@ class Main extends Component {
                 <Route path = '/viewCustomerProfile' component = {ViewCustomerProfile} />
                 <Route path = "/restraurantMessages" component = {RestraurantMessages} />
                 <Route path = "/customerMessages"  component = {CustomerChats} />
+                <Route path = "/allCustomers" component = {AllCustomers} />
             </div>
         )
     }

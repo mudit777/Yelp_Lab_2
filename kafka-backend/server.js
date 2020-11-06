@@ -46,6 +46,11 @@ var get_restraurant_chats = require('./services/Restraurants/Chat/get_restrauran
 var get_chat = require('./services/Restraurants/Chat/get_chat');
 var send_message = require('./services/Restraurants/Chat/send_message');
 var get_customer_chats = require('./services/Customers/CustomerChats/get_customer_chats');
+var get_all_customers = require('./services/Customers/CustomerFollowers/get_all_customers');
+var follow_customer = require('./services/Customers/CustomerFollowers/follow_customer');
+var search_customer = require('./services/Customers/CustomerFollowers/search_customer');
+var get_customer_followers = require('./services/Customers/CustomerFollowers/get_customer_following');
+var get_customet_location_filter = require('./services/Customers/CustomerFollowers/get_location_filter');
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -123,3 +128,8 @@ handleTopicRequest("get_restraurant_chats", get_restraurant_chats);
 handleTopicRequest("get_chat", get_chat);
 handleTopicRequest("send_message", send_message);
 handleTopicRequest("get_customer_chats", get_customer_chats);
+handleTopicRequest("get_all_customers", get_all_customers);
+handleTopicRequest("follow_customer", follow_customer);
+handleTopicRequest("search_customer", search_customer);
+handleTopicRequest("get_customer_followers", get_customer_followers);
+handleTopicRequest("get_customet_location_filter", get_customet_location_filter)

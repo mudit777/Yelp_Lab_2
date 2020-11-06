@@ -17,7 +17,8 @@ class CustomerCard extends Component {
                     <Card title = {this.state.name} style={{boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)"}} actions = {[
                         <Button style = {{width : "50%", color : "white", backgroundColor: "#d32323", bordered : "false"}}><Link style = {{color : "white"}} to = {{
                             pathname : "/viewCustomerProfile",
-                            state : {id : this.props.user._id}
+                            state : {id : this.props.user._id,
+                                     source : this.props.source   }
                         }}>View Customer Profile</Link></Button>
                     ]}>
                         <ul style = {{listStyleType : 'none'}}>
@@ -27,12 +28,12 @@ class CustomerCard extends Component {
                             <li>
                                 <h3>Phone number : {this.props.user.phone_number}</h3>
                             </li>
-                            <li>
+                            {/* <li>
                                 <h3>Address : {this.props.user.address}</h3>
                             </li>
                             <li>
                                 <h3>City : {this.props.user.city}</h3>
-                            </li>
+                            </li> */}
                         </ul>
                     </Card>
                 </div>

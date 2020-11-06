@@ -73,7 +73,10 @@ class LandingPage extends Component {
             var filename = ""
             if(this.props.user)
             {
-                filename = this.props.user.profile_photo.split('public').pop();
+                if(this.props.user.profile_photo)
+                {
+                    filename = this.props.user.profile_photo.split('public').pop();
+                }
                 temp1 = <Link to = '/customerProfile'><Avatar size = {50}  style = {{marginLeft : "58%"}} src = {`${BACKEND}` +  filename} /></Link>
             }
             else{

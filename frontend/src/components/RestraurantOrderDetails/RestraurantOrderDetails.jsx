@@ -317,7 +317,7 @@ class RestraurantOrderDetails extends Component {
                         overflowY :"scroll"
                     }}
                 >
-                    <CustomerCard user = {this.state.user} />
+                    <CustomerCard source = "restraurant" user = {this.state.user} />
                 </Modal>
             </div>
         )

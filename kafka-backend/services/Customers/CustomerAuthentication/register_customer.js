@@ -20,7 +20,7 @@ function handle_request(message, callback){
             const now = new Date();
             var datetime = date.format(now, 'YYYY/MM/DD HH:mm:ss');
             datetime = datetime.substring(0, datetime.indexOf(" "));
-            // var encryptedPassword = ""
+            message.location = message.zip_code
             bcrypt.hash(message.password, 10, (err, hash) => {
                 console.log(hash)
                 // encryptedPassword = hash

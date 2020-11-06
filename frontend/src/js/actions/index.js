@@ -1,4 +1,4 @@
-import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO, GET_CUSTOMER_CHATS } from '../constants/action-types'
+import { CUSTOMER_LOGIN, CUSTOMER_PROFILE, CUSTOMER_SIGNUP, UPDATE_CUSTOMER, LOGOUT_CUSTOMER, GET_RESTRAURANT, SEARCH_RESTRAURANT, FILTER_DELIVERY_RESTRAURANT, FILTER_NEIGHORHOOD_RESTRAURANT, FINAL_FILTER, CUSTOMRE_ORDERS, FILTER_CUSTOMER_ORDERS, CUSTOMER_EVENTS, SEARCH_CUSTOMER_EVENTS, CUSTOMER_REGISTERED_EVENTS, CUSTOMER_REVIEWS, USER_CART_DETAILS, GET_CUSTOMER_RESTRAURANT_DETAILS, GET_CUSTOMER_RESTRAURANT_DISHES, DELETE_CART_ITEM, PLACE_ORDER, GET_CUSTOMER_CURRENT_DISH_DETAILS, SET_CART_ITEM_QUANTITY, GET_CURRENT_CART_ITEM_DETAILS, REGISTER_FOR_AN_EVENT, ADD_ITEM_TO_CART, GET_CUSTOMER_RESTRAURANT_IMAGES, UPDATE_RESTRAURANT_PROFILE, UPDATE_USER_PHOTO, GET_CUSTOMER_CHATS, GET_ALL_CUSTOMERS, FOLLOW_CUSTOMER, SEARCH_CUSTOMER, GET_CUSTOMER_FOLLOWERS, GET_CUSTOMER_LOCATION_FILTER } from '../constants/action-types'
 import axios from 'axios';
 import { BACKEND } from '../../Config';
 import {Input, Button, notification} from 'antd';
@@ -982,11 +982,108 @@ export function get_customer_chats(payload)
                     })
 
                 }
-                // data = {
-                //     message : "Fetched customer chats",
-                //     customer_chats : response.data
-                // }
-                // dispatch({type : GET_CUSTOMER_CHATS, data});
+            }
+        })
+    }
+}
+export function get_all_customers(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.get(`${BACKEND}/getAllCustomers`).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Fetched all customers",
+                    customers : response.data
+                }
+                dispatch({type : GET_ALL_CUSTOMERS, data});
+            }
+        })
+    }
+}
+export function follow_customer(payload)
+{
+    let data = {};
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.post(`${BACKEND}/followCustomer`, payload).then(response => {
+            console.log("~~~~~~~~~~~~~~~~~~~~~~~ response is ~~~~~~~~~~~~~~~~~~~~~~~~~", response)
+            if(response.status === 200)
+            {
+                notification["success"]({
+                    message: 'Success',
+                    description:
+                      'Customer Followed',
+                  });
+                data = {
+                    message : "Customer Followed"
+                }
+                dispatch({type : FOLLOW_CUSTOMER, data});
+            }
+            else if(response.status === 299)
+            {
+                notification["error"]({
+                    message: 'Error',
+                    description:
+                      'Already following the customer',
+                });
+                data = {
+                    message : "Already Following the customer"
+                }
+                dispatch({type : FOLLOW_CUSTOMER, data});
+            }
+        })
+    }
+}
+export function search_customer(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.post(`${BACKEND}/searchCustomer`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Customers Searched",
+                    customers : response.data
+                }
+                dispatch({type : SEARCH_CUSTOMER, data});
+            }
+        })
+    }
+}
+export function get_customer_followers(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.post(`${BACKEND}/getCustomerFollowers`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Following fetched",
+                    customers : response.data
+                }
+                dispatch({type : GET_CUSTOMER_FOLLOWERS, data});
+            }
+        })
+    }
+}
+export function get_customet_location_filter(payload)
+{
+    let data = {}
+    return(dispatch) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+        axios.post(`${BACKEND}/getCustometLocationFilter`, payload).then(response => {
+            if(response.status === 200)
+            {
+                data = {
+                    message : "Customers fetched via location",
+                    customers : response.data
+                }
+                dispatch({type : GET_CUSTOMER_LOCATION_FILTER, data});
             }
         })
     }

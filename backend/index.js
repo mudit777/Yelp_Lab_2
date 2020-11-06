@@ -100,6 +100,7 @@ var restraurantEventsRouter = require('./src/Restraurant/Events/Events');
 var customerFilterRouter = require('./src/Customer/Filter/Filter')
 var restraurantChatRouter = require('./src/Restraurant/Chat/Chat');
 var customerChatRouter = require('./src/Customer/Chats/Chats')
+var customerFollowersRouter = require('./src/Customer/Followers/Followers');
 
 var passport = require('passport');
 var requireAuth = passport.authenticate('jwt', {session: false});
@@ -149,9 +150,11 @@ app.post("/getRestraurantChats", requireAuth, restraurantChatRouter.getRestraura
 app.post("/getChat", requireAuth, restraurantChatRouter.getChat)
 app.post("/sendMessage", requireAuth, restraurantChatRouter.sendMessage);
 app.post("/getCustomerChats", customerChatRouter.getCustomerChats);
-
-
-
+app.get("/getAllCustomers", requireAuth, customerFollowersRouter.getAllCustomers);
+app.post("/followCustomer", requireAuth, customerFollowersRouter.followCustomer);
+app.post("/searchCustomer", requireAuth, customerFollowersRouter.searchCustomer);
+app.post("/getCustomerFollowers", requireAuth, customerFollowersRouter.getCustomerFollowers);
+app.post("/getCustometLocationFilter", requireAuth, customerFollowersRouter.customerLocationfilter);
 
 
 

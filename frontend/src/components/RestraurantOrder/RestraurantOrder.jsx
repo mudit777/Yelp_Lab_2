@@ -62,7 +62,7 @@ class RestraurantOrder extends Component {
         return this.state.elements.map(i => {
             // console.log("Calling child with i ------------------", i)
             return (
-                <RestraurantOrderDetails order = {i} key = {i._id}/>
+                <RestraurantOrderDetails  order = {i} key = {i._id}/>
               )
            });
     }

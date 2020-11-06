@@ -7,7 +7,7 @@ import cookie from 'react-cookies';
 import { customerLogOut, searchRestraurants, finalFilter } from '../../js/actions';
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserFriends, faStar, faCamera, faIdCard, faShoppingCart, faUser, faSignOutAlt, faBriefcase, faUtensils } from '@fortawesome/free-solid-svg-icons'
+import { faUserFriends, faStar, faCamera, faIdCard, faShoppingCart, faUser, faSignOutAlt, faBriefcase, faUtensils, faInbox } from '@fortawesome/free-solid-svg-icons'
 import Avatar from 'antd/lib/avatar/avatar';
 import { BACKEND } from '../../Config';
 const { Option } = Select;
@@ -161,11 +161,18 @@ class UpperCustomerProfile extends Component {
                                 </Col>
                             </Row>
                         </Col>
+                        
                         <Col style={{marginLeft:"30%", marginTop:"2%", width : "10%"}}>
-                            <Link to = '/customerHome'><h3 ><FontAwesomeIcon icon = {faUtensils} /> Restraurants</h3></Link>
+                            <Link to = '/customerHome'><h3 ><FontAwesomeIcon icon = {faUtensils} /></h3></Link>
                         </Col>
-                        <Col style = {{marginLeft : "0%", marginTop : "2%"}} >
-                            <Link to = '/customerEvents'><h3><FontAwesomeIcon icon = {faBriefcase} /> Events</h3></Link>
+                        <Col style = {{marginLeft : "-6%", marginTop : "2%"}}>
+                            <Link to = "/customerMessages"><h3><FontAwesomeIcon icon = {faInbox}/></h3></Link>
+                        </Col>
+                        <Col style = {{marginLeft : "4%", marginTop : "2%"}} >
+                            <Link to = '/allCustomers'><h3><FontAwesomeIcon icon = {faUserFriends} /></h3></Link>
+                        </Col>
+                        <Col style = {{marginLeft : "4%", marginTop : "2%"}} >
+                            <Link to = '/customerEvents'><h3><FontAwesomeIcon icon = {faBriefcase} /></h3></Link>
                         </Col>
                         <Col style = {{marginLeft : "2%", marginTop : "2%"}} >
                             <Link to = "/cart">

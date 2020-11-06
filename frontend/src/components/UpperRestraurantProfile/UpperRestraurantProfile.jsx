@@ -6,7 +6,7 @@ import cookie from 'react-cookies';
 import { customerLogOut, searchRestraurants } from '../../js/actions';
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserFriends, faStar, faCamera, faIdCard, faShoppingCart, faUser, faSignInAlt, faUtensils, faBriefcase } from '@fortawesome/free-solid-svg-icons'
+import { faUserFriends, faStar, faCamera, faIdCard, faShoppingCart, faUser, faSignInAlt, faUtensils, faBriefcase, faInbox } from '@fortawesome/free-solid-svg-icons'
 import Avatar from 'antd/lib/avatar/avatar';
 import { BACKEND } from '../../Config';
 const { Option } = Select;
@@ -88,10 +88,14 @@ class UpperRestraurantProfile extends Component {
                         <Col md = {1}>
                             <img className="yelpSymbol" src="https://s3-media0.fl.yelpcdn.com/assets/public/default@2x.yji-3e0b6fdd67576efda4390daddc35c8f1.png"></img>
                         </Col>
-                        <Col style={{marginLeft:"70%", marginTop:"2%", width : "10%"}}>
+                        
+                        <Col style={{marginLeft:"68%", marginTop:"2%", width : "10%"}}>
                             <Link to = "/restrauProfile"><h3 onClick = {this.getRestraurants}><FontAwesomeIcon icon = {faUtensils} /> Dishes</h3></Link>
                         </Col>
-                        <Col style = {{marginLeft : "0%", marginTop : "2%"}} >
+                        <Col style = {{marginLeft : "0%", marginTop : "2%"}}>
+                            <Link to = "/restraurantMessages"><h3><FontAwesomeIcon icon = {faInbox}/></h3></Link>
+                        </Col>
+                        <Col style = {{marginLeft : "2%", marginTop : "2%"}} >
                             <Link to = "/restraurantEvents"><h3 onClick = {this.getEvents}><FontAwesomeIcon icon = {faBriefcase} /> Events</h3></Link>
                         </Col>
                         <Col style={{marginLeft:"2%", marginTop:"2%", float: 'right'}}>

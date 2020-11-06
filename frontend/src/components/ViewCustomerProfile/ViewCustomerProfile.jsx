@@ -7,7 +7,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { BACKEND } from '../../Config';
-import { getCustomerProfile } from '../../js/actions';
+import { follow_customer, getCustomerProfile } from '../../js/actions';
 import { add_restraurant_chat, get_restraurant_customer_details } from '../../js/actions/restraurant';
 import UpperRestraurantProfile from '../UpperRestraurantProfile/UpperRestraurantProfile';
 class ViewCustomerProfile extends Component {
@@ -25,8 +25,9 @@ class ViewCustomerProfile extends Component {
         var user = {
             UserId : this.props.history.location.state.id
         }
-        console.log("User is ----------", user);
+        console.log("Source is ----------", this.props.history.location.state.source);
         this.props.get_restraurant_customer_details(user);
+       
     }
     componentWillReceiveProps(){
         setTimeout(() => {
@@ -48,7 +49,23 @@ class ViewCustomerProfile extends Component {
             redirect : true
         })
     }
+    followCustomer = () => {
+        var myJson = {
+            customer_id : window.sessionStorage.getItem("UserId"),
+            follower : this.props.restraurant_customer._id
+        }
+        this.props.follow_customer(myJson);
+    }
     render() {
+        var buttonTemp = null;
+        if(this.props.history.location.state.source === "customer")
+        {
+            buttonTemp = <Button onClick  = {this.followCustomer}>Follow Customer</Button>
+        }
+        else if(this.props.history.location.state.source === "restraurant")
+        {
+            buttonTemp = <Button onClick  = {this.redirectToMessages}>Message Customer</Button>
+        }
         let redirectVar = null;
         if(this.state.redirect)
         {
@@ -219,7 +236,7 @@ class ViewCustomerProfile extends Component {
                                 <h3>{this.state.location}</h3>
                             </div>
                             <div>
-                                <Button onClick  = {this.redirectToMessages}>Message Customer</Button>
+                                {buttonTemp}
                             </div>
                         </div>
                     </div>
@@ -236,19 +253,19 @@ class ViewCustomerProfile extends Component {
 }
 // export default ViewCustomerProfile;
 function mapDispatchToProps(dispatch) {
-    return {
-        get_restraurant_customer_details: user => dispatch(get_restraurant_customer_details(user)),
-        add_restraurant_chat : user => dispatch(add_restraurant_chat(user))
-    };
-    }
-    
-    function mapStateToProps(store) {
-        console.log("S")
-    return {
-        restraurant_customer : store.restraurant_customer,
-        message : store.message
-    };
-    }
-    
-    const view_customer_profile = connect(mapStateToProps, mapDispatchToProps)(ViewCustomerProfile);
-    export default view_customer_profile;
+return {
+    get_restraurant_customer_details: user => dispatch(get_restraurant_customer_details(user)),
+    add_restraurant_chat : user => dispatch(add_restraurant_chat(user)),
+    follow_customer : user => dispatch(follow_customer(user))
+};
+}
+
+function mapStateToProps(store) {
+return {
+    restraurant_customer : store.restraurant_customer,
+    message : store.message
+};
+}
+
+const view_customer_profile = connect(mapStateToProps, mapDispatchToProps)(ViewCustomerProfile);
+export default view_customer_profile;

@@ -19,7 +19,8 @@ function handle_request(message, callback)
         things_i_love : message.things_i_love, 
         blog : message.blog, 
         favourites : message.favourites, 
-        address :  message.address
+        address :  message.address,
+        location : message.address + ", " + message.city + ", " + message.state + ", " + message.country + ", " + message.zip_code
     }}, (err, result) => {
         if(err)
         {
