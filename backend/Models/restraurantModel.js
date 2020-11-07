@@ -82,6 +82,10 @@ var restraurantSchema = new Schema({
         type : String,
         required : false
     },
+    coords : {
+        type : Object,
+        required : false
+    }
 }, {
     versionKey : false
 })

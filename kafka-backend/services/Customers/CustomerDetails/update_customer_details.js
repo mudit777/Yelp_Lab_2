@@ -20,7 +20,8 @@ function handle_request(message, callback)
         blog : message.blog, 
         favourites : message.favourites, 
         address :  message.address,
-        location : message.address + ", " + message.city + ", " + message.state + ", " + message.country + ", " + message.zip_code
+        location : message.address + ", " + message.city + ", " + message.state + ", " + message.country + ", " + message.zip_code,
+        coords : message.coords
     }}, (err, result) => {
         if(err)
         {

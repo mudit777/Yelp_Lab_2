@@ -17,7 +17,8 @@ function handle_request(message, callback)
         cusine : message.cusine, 
         takeout : message.takeout, 
         delivery : message.delivery, 
-        dine_in : message.dine_in
+        dine_in : message.dine_in,
+        coords : message.coords
     }}, (err, result) => {
         if(err)
         {

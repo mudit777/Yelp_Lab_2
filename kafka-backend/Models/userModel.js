@@ -98,6 +98,10 @@ var usersSchema = new Schema({
     location : {
         type : String,
         required : false
+    },
+    coords : {
+        type : Object,
+        required : false
     }
 },
 {

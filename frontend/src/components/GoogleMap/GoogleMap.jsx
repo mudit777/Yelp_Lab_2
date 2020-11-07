@@ -5,8 +5,9 @@ import { faMapMarkedAlt, faMapMarker, faMapMarkerAlt, faStreetView } from '@fort
 import Axios from 'axios';
 import { BACKEND } from '../../Config';
 import { connect } from "react-redux";
-import { getRestraurant } from '../../js/actions';
+import { getCustomerProfile, getRestraurant } from '../../js/actions';
 import { notification } from 'antd';
+import { Redirect } from 'react-router-dom';
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 class GoogleMap extends Component {
     constructor(props){
@@ -15,127 +16,54 @@ class GoogleMap extends Component {
             location : [],
             user_location : ""
         }
-        this.getCoordinates();
+        // this.getCoordinates();
         if(window.sessionStorage.getItem("isLoggedIn") === 'true')
         {
-            this.getUserDetails();
+            console.log("~~~~~~~~~~~~~~~~~~~~~~~~logged in ")
+            if(this.props.user)
+            {
+                console.log("Lat and lng of users are --------", this.props.user.coords)
+            }
+            else
+            {
+                console.log("~~~~~~~~~~~~~~~~~~~~~~~~calling user in ")
+                var user = {
+                    user_id : window.sessionStorage.getItem("UserId")
+                }
+                this.props.getCustomerProfile(user);
+            }
         }    
     }
-    getUserDetails = () => {
-        var user = {
-            UserId : window.sessionStorage.getItem("UserId")
-        }
-        Axios.post(`${BACKEND}/getUserDetails`, user).then(response => {
-            if(response.status === 200)
+    componentWillReceiveProps()
+    {
+        setTimeout(() => {
+            if(this.props.user)
             {
-                var temp = response.data.address.split(" ")
-                var location = ""
-                temp.map(i => {
-                    location += i + "+"
+                this.setState({
+                    user_location : this.props.user.coords
                 })
-                location = location + "+" + response.data.zip_code
-                Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
-                    this.setState({
-                        user_location : response.data.results[0].geometry.location
-                    })
-                })
-
             }
-        }).catch(err => {
-            if(err)
-            {
-                notification["error"]({
-                    message: 'Server Sider error',
-                    description:
-                      'Please try again in few minutes',
-                  });
-            }
-        });
-    }
-
-    componentDidMount() {
-        if(window.sessionStorage.getItem("isLoggedIn") === 'true')
-        {
-            // this.props.getRestraurant();
-            var data = []
-            // setTimeout(() => {
-            //     this.props.restraurants.map(i => {
-            //         var location = i.location.split(" ");
-            //         var temp = ""
-            //         location.map(j => {
-            //             temp = temp + j + "+"
-            //         })
-            //         temp += i.zip_code;
-            //         Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ temp +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
-            //             data.push(response.data.results[0].geometry.location)
-            //         })
-            //     })
-            //     setTimeout(() => {
-            //         this.setState({
-            //             location : data
-            //         })
-            //     }, 100)
-            // }, 500)
-        }
-                
+        },);
     }
     componentWillReceiveProps() {
-       
-        setTimeout(() => {
-            var data = []
-            if(this.props.restraurants.length > 0)
-            {
-                this.props.restraurants.map(i => {
-                    
-                    Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ i.location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
-                        console.log("~~~~~~~~~~~~~~~~~ response is ~~~~~~~~~~~~~~~~`", response)
-                        var myJson = {
-                            title : i.restraurant_name,
-                            lat : response.data.results[0].geometry.location.lat,
-                            lng : response.data.results[0].geometry.location.lng
-                        }
-                        data.push(myJson)
-                    })
-                })
-                setTimeout(() => {
-                    this.setState({
-                        location : data
-                    })
-                }, 500)
-            }
-            
-        }, 0)
+       setTimeout(() => {
+           if(this.props.restraurants)
+           {
+               let data = [];
+               this.props.restraurants.map(restraurant => {
+                    let myJson = {
+                        lat : restraurant.coords.lat,
+                        lng : restraurant.coords.lng,
+                        title : restraurant.restraurant_name
+                    }
+                    data.push(myJson);
+               })
+               this.setState({
+                   location : data
+               })
+           }
+       })
     }
-    getCoordinates = () => {
-        Axios.get(`${BACKEND}/getAllRestraurants`).then(response => {
-            if(response.status === 200)
-            {
-                var data = []
-                response.data.map(i => {
-                    var location = i.location.split(" ");
-                    var temp = ""
-                    location.map(j => {
-                        temp = temp + j + "+"
-                    })
-                    temp += i.zip_code;
-                    Axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ temp +"&key=AIzaSyB5f3E2sHlB_ppiVsOTX1oVaSsI9WJktss").then(response => {
-                        var myJson = {
-                            title : i.restraurant_name,
-                            lat : response.data.results[0].geometry.location.lat,
-                            lng : response.data.results[0].geometry.location.lng
-                        }
-                        data.push(myJson)
-                    })
-                })
-                setTimeout(() => {
-                    this.setState({
-                        location : data
-                    })
-                }, 1000)
-                
-            }
-        })
-    }    
     static defaultProps = {
         center: {
           lat: 37.336020,
@@ -144,8 +72,19 @@ class GoogleMap extends Component {
         zoom: 15
       };
     render() {
+        var redirectVar = null;
+        var lat = null;
+        var lng = null;
+        var temp = null;
+        if(!window.sessionStorage.getItem("isLoggedIn"))
+        {
+            console.log("Hi inside redirect")
+            redirectVar = <Redirect to = "/landingPage"></Redirect>
+        }
+        
         return (
             <div>
+                {redirectVar}
                 <div style={{ height: '100vh', width: '190%' }}>
                     <GoogleMapReact
                         bootstrapURLKeys={{ key: "AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I" }}
@@ -153,8 +92,8 @@ class GoogleMap extends Component {
                         defaultZoom={this.props.zoom}
                         >
                         <AnyReactComponent
-                            lat={this.state.user_location.lat}
-                            lng={this.state.user_location.lng}
+                            lat = {this.state.user_location.lat}
+                            lat = {this.state.user_location.lng}
                             title = "HEYY"
                             text = {
                                 <div title = "hey">
@@ -186,7 +125,8 @@ class GoogleMap extends Component {
 // export default GoogleMap;
 function mapDispatchToProps(dispatch) {
     return {
-      getRestraurant: user => dispatch(getRestraurant())
+      getRestraurant: user => dispatch(getRestraurant()),
+      getCustomerProfile : user => dispatch(getCustomerProfile(user))
     };
   }
   
@@ -194,7 +134,8 @@ function mapDispatchToProps(dispatch) {
     return {
       
     //   user_id : store.user_id
-       restraurants : store.restraurants
+       restraurants : store.restraurants,
+       user : store.user
     };
   }
  

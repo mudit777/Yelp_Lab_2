@@ -63,10 +63,11 @@ class UpperCustomerProfile extends Component {
         console.log("Logging out")
         // cookie.remove('cookie', { path: '/' })
         // sessionStorage.clear();
+        this.props.customerLogOut();
         sessionStorage.removeItem("UserId");
         sessionStorage.removeItem('isLoggedIn')
         window.location.reload(false)
-        this.props.customerLogOut();
+        
     }
     handleProfile = () => {
         window.location.href = '/customerProfile'

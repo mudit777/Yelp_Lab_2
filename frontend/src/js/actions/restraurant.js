@@ -43,44 +43,49 @@ export function register_restraurant(payload)
 {
     let data = {}
     return(dispatch) => {
-        axios.post(`${BACKEND}/registerRestraurant`, payload).then(response => {
-            if(response.status === 299)
-            {
-                notification["error"]({
-                    message: 'EmailId already in use',
-                    description:
-                      'A restraurant is registered with this EmailID',
-                  });
-                  data = {
-                    message : "A restraurant is registered with this EmailID"
-                }   
-            }
-            if(response.status === 200)
-            {
-                notification["success"]({
-                    message: 'User Registered',
-                    description:
-                      'User successfully registered',
-                  });
-                  setTimeout(function(){
-                      window.location.href = '/restrauSignIn'
-                  }, 500)
-                data = {
-                    message : "Restraurant Registered"
-                }                
-            }
-            dispatch({type : REGISTER_RESTRAURANT, data})
-        }).catch(err => {
-            if(err)
-            {
-                notification["error"]({
-                    message: 'Server Sider error',
-                    description:
-                    'Please try again in few minutes',
-                });
-            }
-        });
+        axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ payload.location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
+            payload.coords = response.data.results[0].geometry.location
+            axios.post(`${BACKEND}/registerRestraurant`, payload).then(response => {
+                if(response.status === 299)
+                {
+                    notification["error"]({
+                        message: 'EmailId already in use',
+                        description:
+                            'A restraurant is registered with this EmailID',
+                        });
+                        data = {
+                        message : "A restraurant is registered with this EmailID"
+                    }   
+                }
+                if(response.status === 200)
+                {
+                    notification["success"]({
+                        message: 'User Registered',
+                        description:
+                            'User successfully registered',
+                        });
+                        setTimeout(function(){
+                            window.location.href = '/restrauSignIn'
+                        }, 500)
+                    data = {
+                        message : "Restraurant Registered"
+                    }                
+                }
+                dispatch({type : REGISTER_RESTRAURANT, data})
+            }).catch(err => {
+                if(err)
+                {
+                    notification["error"]({
+                        message: 'Server Sider error',
+                        description:
+                        'Please try again in few minutes',
+                    });
+                }
+            });
+        })
+        
     }
+
 }
 
 export function get_restraurant_profile(payload)
@@ -579,25 +584,28 @@ export function update_restraurant_profile_details(payload)
 {
     let data = {}
     return(dispatch) => {
-        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
-        axios.post(`${BACKEND}/updateRestrauDetails`, payload).then(response => {
-            if(response.status === 200)
-            {
-                data = {
-                    message : "Restraurant details updated"
+        axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ payload.location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
+            payload.coords = response.data.results[0].geometry.location
+            axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+            axios.post(`${BACKEND}/updateRestrauDetails`, payload).then(response => {
+                if(response.status === 200)
+                {
+                    data = {
+                        message : "Restraurant details updated"
+                    }
                 }
-            }
-            dispatch({type : UPDATE_RESTRAURANT_PROFILE, data})
-        }).catch(err => {
-            if(err)
-            {
-                notification["error"]({
-                    message: 'Server Sider error',
-                    description:
-                    'Please try again in few minutes',
-                });
-            }
-        });
+                dispatch({type : UPDATE_RESTRAURANT_PROFILE, data})
+            }).catch(err => {
+                if(err)
+                {
+                    notification["error"]({
+                        message: 'Server Sider error',
+                        description:
+                        'Please try again in few minutes',
+                    });
+                }
+            });
+        })
     }
 }
 export function update_restraurant_photo(payload)

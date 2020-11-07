@@ -149,6 +149,7 @@ export function getCustomerProfile (payload) {
 
 export function resgisterUser(payload){
     let data = {}
+    
     return(dispatch) => {
         axios.defaults.withCredentials = true
             axios.post(`${BACKEND}/registerUser`, payload).then(response => {
@@ -183,36 +184,26 @@ export function resgisterUser(payload){
 export function updateCustomerProfile(payload){
     let data = {}
     return(dispatch) => {
-        axios.defaults.withCredentials = true;
-        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
-        axios.post(`${BACKEND}/updateUserInfo`, payload).then(response => {
-            if(response.status === 200)
-            {
-                data = {
-                    message : "User Info Updated",
-                    // full_name : payload.full_name,
-                    // first_name : payload.first_name,
-                    // last_name : payload.last_name,
-                    // email : payload.email,
-                    // phoneNumber : payload.phone_number,
-                    // nick_name : payload.nick_name,
-                    // birthday : payload.birth_day,
-                    // headline : payload.headline,
-                    // address : payload.address,
-                    // city : payload.city,
-                    // state : payload.state,
-                    // country : payload.country,
-                    // zip_code : payload.zip_code,
-                    // things_i_love : payload.things_i_love,
-                    // blog : payload.blog,
-                    // // yelping_since : payload.yelping_since,
-                    // favourites : payload.favourites,
-                    userUpdatedFlag : true
+        var location = payload.address + ", " + payload.city + ", " + payload.state + "-" + payload.zip_code
+        axios.defaults.withCredentials = false;
+        axios.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key=AIzaSyDEoT0HSUWGh-5SZhH0QE7YzRiokTDFa4I").then(response => {
+            payload.coords = response.data.results[0].geometry.location
+            axios.defaults.withCredentials = true;
+            console.log("Final payload is!!!!!!!~~~~~~~~~~~~~~~~~~~~~", payload)
+            axios.defaults.headers.common['authorization'] = sessionStorage.getItem('jwtToken');
+            axios.post(`${BACKEND}/updateUserInfo`, payload).then(response => {
+                if(response.status === 200)
+                {
+                    data = {
+                        message : "User Info Updated",
+                        userUpdatedFlag : true
+                    }
+                    dispatch({type : UPDATE_CUSTOMER, data});
+                    // window.location.href = '/customerProfile'
                 }
-                dispatch({type : UPDATE_CUSTOMER, data});
-                // window.location.href = '/customerProfile'
-            }
-        }).catch()
+            }).catch()
+        })
+        
     }
 }
 
@@ -264,11 +255,11 @@ export function getRestraurant(){
         }).catch(err => {
             if(err)
             {
-                notification["error"]({
-                    message: 'Server Sider error',
-                    description:
-                      'Please try again in few minutes',
-                  });
+                // notification["error"]({
+                //     message: 'Server Sider errorrrr',
+                //     description:
+                //       'Please try again in few minutes',
+                //   });
             }
         })
     }
