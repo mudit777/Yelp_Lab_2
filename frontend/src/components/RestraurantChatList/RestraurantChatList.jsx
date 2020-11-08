@@ -10,7 +10,7 @@ class RestraurantChatList extends Component {
     {
         super(props);
         this.state = {
-            
+            recieved : false
         }
         if(window.sessionStorage.getItem("RestrauId"))
         {
@@ -27,6 +27,16 @@ class RestraurantChatList extends Component {
             this.props.get_customer_chats(customer);
         }
         
+    }
+    componentWillReceiveProps(){
+        setTimeout(() => {
+           if(this.props.restraurant_chats)
+           {
+               this.setState({
+                   recieved : true
+               })
+           } 
+        }, );
     }
     render() {
         var temp = null;

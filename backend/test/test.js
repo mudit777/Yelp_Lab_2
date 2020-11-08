@@ -31,7 +31,7 @@ describe('Yelp', function(){
                     console.log(error);
                 });
         });
-
+``
         it("Successful Customer Signup", () => {
             agent.post("/registerUser")
                 .send({ first_name: "Udit",
@@ -60,6 +60,7 @@ describe('Yelp', function(){
                 .then((res) => {
                     expect(res.status).to.equal(200)
                 })
+                .set("authorization", "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmE3NTE5NGI0NTY0OTBjOGJlMmY2OGIiLCJzb3VyY2UiOiJjdXN0b21lciIsImlhdCI6MTYwNDgxMjMzMywiZXhwIjoxNjA1ODIwMzMzfQ.p6mZX0q-AJIwTe04hd5wx_ZO8TI893u-hNgcmoquEbY")
                 .catch(err => {
                     console.log(err)
                 })
@@ -71,6 +72,7 @@ describe('Yelp', function(){
                 .send({
                     search : "chicken"
                 })
+                .set("authorization", "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmE3NTE5NGI0NTY0OTBjOGJlMmY2OGIiLCJzb3VyY2UiOiJjdXN0b21lciIsImlhdCI6MTYwNDgxMjMzMywiZXhwIjoxNjA1ODIwMzMzfQ.p6mZX0q-AJIwTe04hd5wx_ZO8TI893u-hNgcmoquEbY")
                 .then((res) => {
                     expect(res.status).to.equal(200)
                 })
@@ -80,11 +82,12 @@ describe('Yelp', function(){
         })
     })
     describe("Filter CustomerOrders", () => {
-        it("Search", () => {
+        it("Filter customer orders", () => {
             agent.post("/filterCustomerOrders")
                 .send({
                     filter : "past"
                 })
+                .set("authorization", "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmE3NTE5NGI0NTY0OTBjOGJlMmY2OGIiLCJzb3VyY2UiOiJjdXN0b21lciIsImlhdCI6MTYwNDgxMjMzMywiZXhwIjoxNjA1ODIwMzMzfQ.p6mZX0q-AJIwTe04hd5wx_ZO8TI893u-hNgcmoquEbY")
                 .then((res) => {
                     expect(res.status).to.equal(200)
                 })
@@ -94,8 +97,9 @@ describe('Yelp', function(){
         })
     })
     describe("Get all Events", () => {
-        it("Search", () => {
+        it("Get All Events", () => {
             agent.post("/getEvents")
+                .set("authorization", "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmE3NTE5NGI0NTY0OTBjOGJlMmY2OGIiLCJzb3VyY2UiOiJjdXN0b21lciIsImlhdCI6MTYwNDgxMjMzMywiZXhwIjoxNjA1ODIwMzMzfQ.p6mZX0q-AJIwTe04hd5wx_ZO8TI893u-hNgcmoquEbY")
                 .then((res) => {
                     expect(res.status).to.equal(200)
                 })

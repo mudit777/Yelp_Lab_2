@@ -6,7 +6,6 @@ var requireAuth = passport.authenticate('jwt', { session: false });
 
 
 exports.getCustomerDetails = (req, res) => {
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~Inside function successfully", req.body);
     kafka.make_request('get_customer_details', req.body, (err, result) => {
         if(result === 500)
         {
@@ -45,8 +44,6 @@ exports.updateCustomerDetails = (req, res) => {
 }
 exports.uploadProfileImage =  function(req, res){
     req.body["path"] = req.file.path;
-    console.log(req.file.path)
-    console.log("user id is", req.body.UserId)
     kafka.make_request("upload_profile_image", req.body, (err, result) => {
         if(result === 500)
         {
